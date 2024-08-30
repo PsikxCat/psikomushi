@@ -1,0 +1,25 @@
+{
+  "name": "psikomushi_monorepo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm --parallel --stream -r run dev",
+    "phoenix": "rm -f pnpm-lock.yaml && rm -rf ./node_modules && pnpm install",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "psikocat",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "eslint": "^9.9.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-react": "^7.35.0",
+    "husky": "^9.1.5",
+    "lint-staged": "^15.2.9",
+    "prettier": "^3.3.3"
+  }
+}
