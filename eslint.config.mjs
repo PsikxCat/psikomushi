@@ -4,6 +4,7 @@ import reactPlugin from 'eslint-plugin-react'
 import reactHooksPlugin from 'eslint-plugin-react-hooks'
 import prettierPlugin from 'eslint-plugin-prettier'
 import prettierConfig from 'eslint-config-prettier'
+import globals from 'globals'
 
 export default tseslint.config(
   {
@@ -27,6 +28,10 @@ export default tseslint.config(
         ecmaFeatures: {
           jsx: true,
         },
+      },
+      globals: {
+        ...globals.node,
+        ...globals.es2021,
       },
     },
     settings: {
