@@ -1,48 +1,37 @@
-import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom'
 
-import './App.css'
-import { supabase } from './utils/supabase'
+import { Home, Dashboard, Products, Orders, Customers } from '@/pages'
+import MainLayout from '@/layouts/MainLayout'
 
-function UserList() {
-  const [users, setUsers] = useState<
-    {
-      id_employee: number
-      name: string
-      surname: string
-      role: string
-      phone_number: string
-      email: string
-      hire_date: string
-    }[]
-  >([])
-
-  useEffect(() => {
-    getUsers()
-  }, [])
-
-  async function getUsers() {
-    const { data, error } = await supabase.from('employee').select('*')
-    console.log('data :>> ', data)
-
-    if (error) {
-      console.error('Error fetching users:', error)
-    } else {
-      setUsers(data)
-    }
-  }
-
+const App: React.FC = () => {
   return (
-    <div className="mx-0 flex w-full flex-col items-center gap-3 border p-20">
-      <h1>data de Supabase</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id_employee}>
-            {user.name} {user.surname} - {new Date(user.hire_date).toLocaleDateString()}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <MainLayout>
+              <Outlet />
+            </MainLayout>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="products" element={<Products />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="customers" element={<Customers />} />
+        </Route>
+      </Routes>
+    </Router>
   )
 }
 
-export default UserList
+export default App

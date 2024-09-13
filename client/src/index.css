@@ -1,34 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=SUSE:wght@200..600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  :root {
+    font-family: "SUSE", system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    color-scheme: dark;
+    /* color: rgba(255, 255, 255, 0.87); */
+    /* background-color: #161618; */
+    user-select: none;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    --background: #161618; /* Fondo oscuro */
+    --foreground: #E0E0E0; /* Texto claro */
+    --card: #1E1E1E; /* Fondo de tarjeta oscuro */
+    --card-foreground: #FFFFFF; /* Texto de tarjeta blanco */
+    --popover: #1E1E1E; /* Fondo de popover oscuro */
+    --popover-foreground: #FFFFFF; /* Texto de popover blanco */
+    --primary: #BB86FC; /* Color primario morado vibrante */
+    --primary-foreground: #000000; /* Texto primario negro */
+    --secondary: #03DAC6; /* Color secundario verde agua */
+    --secondary-foreground: #000000; /* Texto secundario negro */
+    --muted: #333333; /* Color atenuado gris oscuro */
+    --muted-foreground: #B3B3B3; /* Texto atenuado gris claro */
+    --accent: #FF4081; /* Color de acento rosa vibrante */
+    --accent-foreground: #FFFFFF; /* Texto de acento blanco */
+    --destructive: #FF5252; /* Color destructivo rojo brillante */
+    --destructive-foreground: #FFFFFF; /* Texto destructivo blanco */
+    --border: #444444; /* Borde gris oscuro */
+    --input: #1F1F1F; /* Fondo de entrada gris oscuro */
+    --ring: #FFAA00; /* Color de anillo amarillo */
+    --chart-1: #1E90FF; /* Color de gráfico azul */
+    --chart-2: #32CD32; /* Color de gráfico verde */
+    --chart-3: #FFD700; /* Color de gráfico dorado */
+    --chart-4: #FF69B4; /* Color de gráfico rosa */
+    --chart-5: #8A2BE2; /* Color de gráfico violeta */
+    --radius: 0.5rem; /* Radio de borde */  }
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  width: 100%;
-  border: 1px solid red;
-  min-height: 100vh;
+@layer utilities {
+  .flex_center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex_center_column {
+    @apply flex flex-col justify-center items-center;
+  }
+
+  .container {
+    @apply w-full max-w-3xl flex justify-center items-center;
+  }
+
+  .p {
+    @apply text-[clamp(1rem,0.2rem_+_2vw,3rem)] max-md:leading-5;
+  }
 }
+
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
