@@ -6,11 +6,11 @@ interface MainLayoutProps {
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   return (
-    <div className="flex_center_column min-h-[100svh] w-full">
+    <section className="flex_center_column min-h-[100svh] w-full border border-green-500">
       <Navbar />
-      <div className="flex_center container w-full flex-1">{children}</div>
+      <div className="flex_center w-full flex-1">{children}</div>
       <Footer />
-    </div>
+    </section>
   )
 }
 

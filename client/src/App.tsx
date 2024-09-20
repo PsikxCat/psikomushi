@@ -1,7 +1,8 @@
-import { BrowserRouter as Router, Route, Routes, Outlet } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 
 import { Home, Dashboard, Products, Orders, Customers } from '@/pages'
 import MainLayout from '@/layouts/MainLayout'
+import AdminLayout from './layouts/AdminLayout'
 
 const App: React.FC = () => {
   return (
@@ -20,7 +21,7 @@ const App: React.FC = () => {
           path="/admin"
           element={
             <MainLayout>
-              <Outlet />
+              <AdminLayout />
             </MainLayout>
           }
         >

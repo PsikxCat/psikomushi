@@ -1,5 +1,7 @@
-import { supabase } from '@/utils/supabase'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
+
+// import { supabase } from '@/utils/supabase'
+import { GlobalContext } from '@/context/GlobalContext'
 
 export default function Dashboard() {
   const [users, setUsers] = useState<
@@ -14,20 +16,29 @@ export default function Dashboard() {
     }[]
   >([])
 
+  const { isLoggedIn } = useContext(GlobalContext)
+  console.log('isLoggedIn :>> ', isLoggedIn)
+
   useEffect(() => {
-    getUsers()
-  }, [])
+    // if (!isLoggedIn) return
 
-  async function getUsers() {
-    const { data, error } = await supabase.from('employee').select('*')
-    console.log('data :>> ', data)
+    getEmployees()
+  }, [isLoggedIn])
 
-    if (error) {
-      console.error('Error fetching users:', error)
-    } else {
+  async function getEmployees() {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/db/employees`)
+
+      if (!response.ok) throw new Error('Error cargando empleados')
+
+      const data = await response.json()
+      console.log('data desde API :>> ', data)
       setUsers(data)
+    } catch (error) {
+      console.error('Error fetching users:', error)
     }
   }
+
   return (
     <section className="flex_center_column gap-2">
       <h1>data de Supabase</h1>

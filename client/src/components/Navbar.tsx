@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { Menu } from '@/components'
 
 export default function Navbar() {
-  const isLoggedIn = true // Valor de ejemplo
+  const isLoggedIn = false // Valor de ejemplo
   const isAdmin = true // Valor de ejemplo
 
   return (
-    <section className="flex_center sticky top-0 h-[calc(50px+5vw)] w-full border-b bg-background">
+    <section className="flex_center sticky top-0 h-[calc(50px+5vw)] w-full border-b bg-black/80">
       <div className="h-full w-full">
         <nav className="flex_center h-full w-full">
           {/* Logo Psikoware */}

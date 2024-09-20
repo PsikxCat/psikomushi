@@ -2,11 +2,9 @@ import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import morgan from 'morgan'
-import { getEmployees } from './config/supabase.js'
 
-// import userRoutes from './routes/user.routes.js'
-// import channelRoutes from './routes/channel.routes.js'
-// import messageRoutes from './routes/message.routes.js'
+// import authRoutes from '@/routes/auth.routes'
+import dbRoutes from '@/routes/db.routes'
 
 // | Cargar variables de entorno
 if (process.env.NODE_ENV !== 'production') dotenv.config({ path: 'src/config/.env.local' })
@@ -28,14 +26,8 @@ app.use(express.json())
 // | Parsear urlencoded payloads
 app.use(express.urlencoded({ extended: true }))
 
-getEmployees()
-
-// // # Routes
-// app.get('/api/session', (req, res) => {
-//   res.json(req.session)
-// })
-// app.use('/api/user', userRoutes)
-// app.use('/api/channel', channelRoutes)
-// app.use('/api/message', messageRoutes)
+// # Routes ⬇️  //////////////////////////////////////////
+// app.use('/auth', authRoutes)
+app.use('/db', dbRoutes)
 
 export default app

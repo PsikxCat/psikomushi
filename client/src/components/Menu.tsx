@@ -33,7 +33,7 @@ export default function Menu({ isLoggedIn, isAdmin }: MenuProps) {
       {isOpen && (
         <div className="absolute right-0 top-[50px] z-50 flex w-[120px] flex-col gap-2 rounded-md border bg-background px-4 py-3">
           {!isLoggedIn && (
-            <Link to="/login" onClick={toogleOpen}>
+            <Link to="/auth/login" onClick={toogleOpen}>
               Ingresa
             </Link>
           )}
