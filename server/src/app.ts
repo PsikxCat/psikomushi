@@ -3,8 +3,8 @@ import dotenv from 'dotenv'
 import cors from 'cors'
 import morgan from 'morgan'
 
-// import authRoutes from '@/routes/auth.routes'
 import dbRoutes from '@/routes/db.routes'
+import authRoutes from '@/routes/auth.routes'
 
 // | Cargar variables de entorno
 if (process.env.NODE_ENV !== 'production') dotenv.config({ path: 'src/config/.env.local' })
@@ -15,11 +15,11 @@ const app = express()
 // | Permitir peticiones desde el cliente
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.CLIENT_BASE_URL, // # Cambiar a variable de entorno <-----------
     credentials: true,
   }),
 )
-// | Registrar peticiones en consola con morgan
+// | Evitar mostrar registros de petición en producción
 if (process.env.NODE_ENV !== 'production') app.use(morgan('dev'))
 // | Parsear peticiones con body-parser
 app.use(express.json())
@@ -27,7 +27,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // # Routes ⬇️  //////////////////////////////////////////
-// app.use('/auth', authRoutes)
 app.use('/db', dbRoutes)
+app.use('/api/auth', authRoutes)
 
 export default app

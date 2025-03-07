@@ -4,3 +4,13 @@ export interface UserType {
   email: string
   role: 'admin' | 'vendor' | 'user'
 }
+
+export interface EmployeeType {
+  id_employee: number
+  name: string
+  surname: string
+  role: string
+  phone_number: string
+  email: string
+  hire_date: string
+}

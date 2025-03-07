@@ -1,6 +1,9 @@
-export { default as Home } from './Home.tsx'
+export { default as Home } from './Home'
 
-export { default as Dashboard } from './admin/Dashboard.tsx'
-export { default as Products } from './admin/Products.tsx'
-export { default as Orders } from './admin/Orders.tsx'
-export { default as Customers } from './admin/Customers.tsx'
+export { default as DashboardPage } from './admin/DashboardPage'
+export { default as ProductsPage } from './admin/ProductsPage'
+export { default as OrdersPage } from './admin/OrdersPage'
+export { default as CustomersPage } from './admin/CustomersPage'
+
+export { default as LoginPage } from './auth/LoginPage'
+export { default as RegisterPage } from './auth/RegisterPage'

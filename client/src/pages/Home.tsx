@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+
+import { GlobalContext } from '@/context/GlobalContext'
 import { ProductCard } from '@/components'
 
 export default function Home() {
@@ -39,6 +42,10 @@ export default function Home() {
       description: 'Descripción breve del hongo comestible 6.',
     },
   ]
+
+  //traer el elemento isLoggedIn del contexto
+  const { isLoggedIn } = useContext(GlobalContext)
+  console.log('isLoggedIn: ', isLoggedIn)
 
   return (
     <section className="mx-0 flex w-full flex-col items-center gap-8 py-20">
