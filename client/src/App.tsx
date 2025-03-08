@@ -11,50 +11,34 @@ import {
 } from '@/pages'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
+import { RequireAdmin, RequireEmployee } from '@/utils/routeGuard'
 
 const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <MainLayout>
-              <Home />
-            </MainLayout>
-          }
-        />
+        {/* Rutas públicas */}
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="auth/login" element={<LoginPage />} />
+          <Route path="auth/register" element={<RegisterPage />} />
+        </Route>
 
-        <Route
-          path="/auth/login"
-          element={
-            <MainLayout>
-              <LoginPage />
-            </MainLayout>
-          }
-        />
+        {/* Rutas del panel de administración */}
+        <Route path="/admin" element={<MainLayout />}>
+          <Route element={<AdminLayout />}>
+            {/* Rutas accesibles para empleados y administradores */}
+            <Route element={<RequireEmployee />}>
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="customers" element={<CustomersPage />} />
+            </Route>
 
-        <Route
-          path="/auth/register"
-          element={
-            <MainLayout>
-              <RegisterPage />
-            </MainLayout>
-          }
-        />
-
-        <Route
-          path="/admin"
-          element={
-            <MainLayout>
-              <AdminLayout />
-            </MainLayout>
-          }
-        >
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="products" element={<ProductsPage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="customers" element={<CustomersPage />} />
+            {/* Rutas solo para administradores */}
+            <Route element={<RequireAdmin />}>
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="products" element={<ProductsPage />} />
+            </Route>
+          </Route>
         </Route>
       </Routes>
     </Router>

@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom'
 import { Menu } from '@/components'
 
 export default function Navbar() {
-  const isLoggedIn = false // Valor de ejemplo
-  const isAdmin = true // Valor de ejemplo
-
   return (
     <section className="flex_center sticky top-0 h-[calc(50px+5vw)] w-full border-b bg-black/80">
       <div className="h-full w-full">
@@ -21,7 +18,7 @@ export default function Navbar() {
           </Link>
 
           {/* Menu */}
-          <Menu isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
+          <Menu />
         </nav>
       </div>
     </section>

@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { type Dispatch, type SetStateAction, createContext } from 'react'
+import { createContext } from 'react'
+import { Session } from '@supabase/supabase-js'
 
 export interface GlobalContextType {
-  isLoggedIn: any
-  setIsLoggedIn: Dispatch<SetStateAction<any>>
+  session: Session | null
 }
 
 export const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType)
-
-//!!!!!!!!!!!!!! tipar correctamente los valores de GlobalContextType !!!!!!!!!!!!!!!!!!!!!!!!!!!

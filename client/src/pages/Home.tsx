@@ -41,11 +41,11 @@ export default function Home() {
       name: 'Hongo Comestible 6',
       description: 'Descripción breve del hongo comestible 6.',
     },
-  ]
+  ] // ############### Esto es un ejemplo, se debe traer los productos de la base de datos #####################################################
 
-  //traer el elemento isLoggedIn del contexto
-  const { isLoggedIn } = useContext(GlobalContext)
-  console.log('isLoggedIn: ', isLoggedIn)
+  //traer el elemento session del contexto
+  const { session } = useContext(GlobalContext)
+  console.log('session: ', session)
 
   return (
     <section className="mx-0 flex w-full flex-col items-center gap-8 py-20">

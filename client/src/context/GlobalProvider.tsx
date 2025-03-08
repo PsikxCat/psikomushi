@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Session } from '@supabase/supabase-js'
 
 import { GlobalContext } from './GlobalContext'
 import { supabase } from '@/utils/supabase'
@@ -8,23 +9,21 @@ interface GlobalProviderProps {
 }
 
 export default function GlobalProvider({ children }: GlobalProviderProps) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // ! Esto esta hardcodeado, deberia ser un estado que se obtenga de la API de autenticacion de Supabase <--------
-  console.log('isLoggedIn: ', isLoggedIn)
+  const [session, setSession] = useState<Session | null>(null)
 
+  // Mantener actualizada la sesión de usuario
   useEffect(() => {
-    const getSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
-      setIsLoggedIn(!!session)
+    const fetchSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      setSession(data.session)
     }
 
-    getSession()
+    fetchSession()
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session)
+    } = supabase.auth.onAuthStateChange((_, session) => {
+      setSession(session)
     })
 
     return () => subscription.unsubscribe()
@@ -33,8 +32,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
   return (
     <GlobalContext.Provider
       value={{
-        isLoggedIn,
-        setIsLoggedIn,
+        session,
       }}
     >
       {children}

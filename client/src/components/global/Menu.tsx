@@ -1,20 +1,21 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 
-interface MenuProps {
-  isLoggedIn: boolean
-  isAdmin: boolean
-}
+import { GlobalContext } from '@/context/GlobalContext'
 
-export default function Menu({ isLoggedIn, isAdmin }: MenuProps) {
+export default function Menu() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { pathname } = useLocation()
   const isAdminPath = pathname.includes('/admin')
 
+  const { session } = useContext(GlobalContext)
+
   const toogleOpen = () => {
     setIsOpen((prev) => !prev)
   }
+
+  // ################ ACA HAY BASTANTE POR CORREGIR 🔽🔽🔽🔽🔽🔽🔽🔽🔽 ###################################################################
 
   return (
     <section className="absolute right-[50px]">
@@ -32,13 +33,13 @@ export default function Menu({ isLoggedIn, isAdmin }: MenuProps) {
       {/*  menu */}
       {isOpen && (
         <div className="absolute right-0 top-[50px] z-50 flex w-[120px] flex-col gap-2 rounded-md border bg-background px-4 py-3">
-          {!isLoggedIn && (
+          {!session && (
             <Link to="/auth/login" onClick={toogleOpen}>
               Ingresa
             </Link>
           )}
 
-          {isLoggedIn && isAdmin && !isAdminPath ? (
+          {session && !isAdminPath ? (
             <Link to="/admin/dashboard" onClick={toogleOpen}>
               Dashboard
             </Link>
@@ -48,7 +49,7 @@ export default function Menu({ isLoggedIn, isAdmin }: MenuProps) {
             </Link>
           )}
 
-          {isLoggedIn && (
+          {session && (
             <Link to="/logout" onClick={toogleOpen}>
               Salir
             </Link>

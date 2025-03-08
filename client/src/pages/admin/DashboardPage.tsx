@@ -7,8 +7,8 @@ import { getEmployees } from '@/api/employeeService'
 export default function DashboardPage() {
   const [users, setUsers] = useState<EmployeeType[]>([])
 
-  const { isLoggedIn } = useContext(GlobalContext)
-  console.log('isLoggedIn :>> ', isLoggedIn)
+  const { session } = useContext(GlobalContext)
+  console.log('session :>> ', session)
 
   useEffect(() => {
     fetchEmployees()
