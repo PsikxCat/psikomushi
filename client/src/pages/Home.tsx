@@ -49,7 +49,7 @@ export default function Home() {
 
   return (
     <section className="mx-0 flex w-full flex-col items-center gap-8 py-20">
-      <p className="p text-center font-semibold leading-10">
+      <p className="p max-w-[600px] text-center font-semibold leading-10">
         &quot;Descubre un mundo de sabores y propiedades únicas en nuestro catálogo de setas. ¡Frescura y
         calidad garantizadas!&quot;
       </p>

@@ -1,11 +1,10 @@
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-import { type z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
+import { type z } from 'zod'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { supabase } from '@/utils/supabase'
 import { RegisterSchema } from '@/schemas'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -13,10 +12,9 @@ import { Button } from '@/components/ui/button'
 import { CardWrapper, Spinner, MessageSuccess, MessageError } from '@/components'
 
 export default function RegisterForm() {
-  const [error, setError] = useState<string | undefined>('')
-  const [success, setSuccess] = useState<string | undefined>('')
-
-  const [isPending, startTransition] = useTransition()
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -29,36 +27,46 @@ export default function RegisterForm() {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-    setError('')
-    setSuccess('')
+  const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
+    try {
+      // validar que contrasenas coincidan
+      if (values.password !== values.confirmPassword) {
+        setError('Las contraseñas no coinciden')
+        return
+      }
 
-    if (values.password !== values.confirmPassword) {
-      setError('Las contraseñas no coinciden')
-      return
+      setIsRegistering(true)
+      setError(null)
+      setSuccess(null)
+
+      // registrar usuario
+      const { error: supabaseError } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+      })
+      // si hay error lanzar error para que sea capturado por el catch
+      if (supabaseError) throw supabaseError
+
+      // actualizar el perfil con el nombre del user
+      const { data: auth } = await supabase.auth.getSession()
+      if (auth.session) {
+        await supabase.auth.updateUser({
+          data: {
+            name: values.name,
+          },
+        })
+      }
+
+      setSuccess('Registro exitoso!')
+      navigate('/auth/login')
+    } catch (error) {
+      // manejo de error con tipado estricto
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido al registrar'
+      setError(errorMessage)
+      console.error('Error al registrar:', errorMessage)
+    } finally {
+      setIsRegistering(false)
     }
-
-    startTransition(() => {
-      console.log('Performing registration...')
-
-      axios
-        .post(import.meta.env.VITE_API_BASE_URL + '/api/auth/register', values)
-        .then((response) => {
-          const data = response.data
-          console.log('respuesta de api' + data.success)
-          if (data.error) setError(data.error)
-          if (data.success) {
-            setSuccess(data.success)
-            navigate('/auth/login')
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          setError(error.response?.data?.error || 'Error desconocido')
-        })
-    })
-
-    console.log(values)
   }
 
   return (
@@ -139,12 +147,12 @@ export default function RegisterForm() {
           </div>
 
           {/* mensajes error/success */}
-          <MessageError message={error} />
-          <MessageSuccess message={success} />
+          {error && <MessageError message={error} />}
+          {success && <MessageSuccess message={success} />}
 
           {/* botón de submit */}
-          <Button type="submit" size="sm" className="mx-auto my-5 w-[50%]">
-            {isPending ? <Spinner visible /> : 'Registrarse'}{' '}
+          <Button type="submit" size="sm" className="mx-auto my-5 w-[50%]" disabled={isRegistering}>
+            {isRegistering ? <Spinner visible /> : 'Registrarse'}{' '}
           </Button>
         </form>
       </Form>

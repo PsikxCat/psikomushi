@@ -15,3 +15,4 @@ export { default as Sidebar } from './admin/Sidebar'
 
 export { default as LoginForm } from './auth/LoginForm'
 export { default as RegisterForm } from './auth/RegisterForm'
+export { default as LogoutButton } from './global/LogoutButton'

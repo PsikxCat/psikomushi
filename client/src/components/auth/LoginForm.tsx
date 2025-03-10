@@ -1,11 +1,10 @@
-import { useState, useTransition } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
-import { type z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import axios from 'axios'
+import { type z } from 'zod'
 
+import { zodResolver } from '@hookform/resolvers/zod'
+import { supabase } from '@/utils/supabase'
 import { LoginSchema } from '@/schemas'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -13,10 +12,9 @@ import { Button } from '@/components/ui/button'
 import { CardWrapper, Spinner, MessageSuccess, MessageError } from '@/components'
 
 export default function LoginForm() {
-  const [error, setError] = useState<string | undefined>('')
-  const [success, setSuccess] = useState<string | undefined>('')
-
-  const [isPending, startTransition] = useTransition()
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -27,32 +25,38 @@ export default function LoginForm() {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-    setError('')
-    setSuccess('')
+  const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
+    try {
+      const { email, password } = values
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      })
 
-    startTransition(() => {
-      console.log('Performing login...')
+      if (error) throw error // Lanzar error para que sea capturado por el catch
 
-      axios
-        .post(import.meta.env.VITE_API_BASE_URL + '/api/auth/login', values)
-        .then((response) => {
-          const data = response.data
-          console.log('respuesta de api' + data.success)
-          if (data.error) setError(data.error)
-          if (data.success) {
-            setSuccess(data.success)
-            navigate('/')
-          }
-        })
-        .catch((error) => {
-          console.error(error)
-          setError(error.response?.data?.error || 'Error desconocido')
-        })
-    })
-
-    console.log(values)
+      setSuccess('Login exitoso!')
+      navigate('/')
+    } catch (error) {
+      // Manejo de error con tipado estricto
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido al iniciar sesión'
+      setError(errorMessage)
+      console.error('Error al iniciar sesión:', errorMessage)
+    } finally {
+      setIsLoggingIn(false)
+    }
   }
+
+  // Limpiar mensajes despues de cinco segundos
+  useEffect(() => {
+    if (error || success) {
+      const timeout = setTimeout(() => {
+        setError(null)
+        setSuccess(null)
+      }, 5000)
+      return () => clearTimeout(timeout)
+    }
+  }, [error, success])
 
   return (
     <CardWrapper
@@ -99,12 +103,12 @@ export default function LoginForm() {
           </div>
 
           {/* mensajes error/success */}
-          <MessageError message={error} />
-          <MessageSuccess message={success} />
+          {error && <MessageError message={error} />}
+          {success && <MessageSuccess message={success} />}
 
           {/* botón de submit */}
-          <Button type="submit" size="sm" className="mx-auto my-5 w-[50%]">
-            {isPending ? <Spinner visible /> : 'Iniciar sesión'}{' '}
+          <Button type="submit" size="sm" className="mx-auto my-5 w-[50%]" disabled={isLoggingIn}>
+            {isLoggingIn ? <Spinner visible /> : 'Iniciar sesión'}{' '}
           </Button>
         </form>
       </Form>

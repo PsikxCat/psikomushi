@@ -11,7 +11,7 @@ import {
 } from '@/pages'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
-import { RequireAdmin, RequireEmployee } from '@/utils/routeGuard'
+import { RequireAdmin, RequireEmployee, RequireGuest } from '@/utils/routeGuard'
 
 const App: React.FC = () => {
   return (
@@ -20,8 +20,10 @@ const App: React.FC = () => {
         {/* Rutas públicas */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="auth/login" element={<LoginPage />} />
-          <Route path="auth/register" element={<RegisterPage />} />
+          <Route path="/auth" element={<RequireGuest />}>
+            <Route path="login" element={<LoginPage />} />
+            <Route path="register" element={<RegisterPage />} />
+          </Route>
         </Route>
 
         {/* Rutas del panel de administración */}

@@ -3,13 +3,14 @@ import { Link, useLocation } from 'react-router-dom'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 
 import { GlobalContext } from '@/context/GlobalContext'
+import LogoutButton from './LogoutButton'
 
 export default function Menu() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const { pathname } = useLocation()
   const isAdminPath = pathname.includes('/admin')
 
-  const { session } = useContext(GlobalContext)
+  const { session, setSession } = useContext(GlobalContext)
 
   const toogleOpen = () => {
     setIsOpen((prev) => !prev)
@@ -49,11 +50,7 @@ export default function Menu() {
             </Link>
           )}
 
-          {session && (
-            <Link to="/logout" onClick={toogleOpen}>
-              Salir
-            </Link>
-          )}
+          {session && <LogoutButton setSession={setSession} />}
         </div>
       )}
 

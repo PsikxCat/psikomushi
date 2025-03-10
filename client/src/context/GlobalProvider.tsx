@@ -33,6 +33,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     <GlobalContext.Provider
       value={{
         session,
+        setSession,
       }}
     >
       {children}
