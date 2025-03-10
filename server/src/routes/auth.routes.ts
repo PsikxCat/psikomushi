@@ -9,3 +9,5 @@ router.post('/login', loginController)
 router.post('/register', registerController)
 
 export default router
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! este fichero se elimina ya que esta logica se trslada al cliente <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

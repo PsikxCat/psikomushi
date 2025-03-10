@@ -61,3 +61,6 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
     return { error: 'Error desconocido' }
   }
 }
+
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! este fichero se modifica incluyendo su nombre para que contenga la logica de acceso a la base de datos <<<<<<
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! la logica correspondiente a la autenticacion se eliminara <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

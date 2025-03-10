@@ -28,6 +28,6 @@ app.use(express.urlencoded({ extended: true }))
 
 // # Routes ⬇️  //////////////////////////////////////////
 app.use('/db', dbRoutes)
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRoutes) // ! eliminar esta ruta; la autenticacion de usuarios se traslada al cliente
 
 export default app

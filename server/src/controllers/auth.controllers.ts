@@ -3,9 +3,6 @@ import { Request, Response } from 'express'
 import { LoginSchema, RegisterSchema } from '@/schemas'
 import { login, register } from '@/actions/userAuth'
 
-// import { supabase } from '@/config/supabase'
-
-// > Pasar a un archivo aparte src/types/api.types.ts <-----------------------------
 interface ApiResponse<T> {
   success: boolean
   message: string
@@ -30,6 +27,7 @@ export const getUser = async (req: Request, res: Response) => {
   return res.status(200).json(response)
 }
 
+// > Se debe eliminar todo lo relacionado a la autenticación del lado del server <---------------------
 export const loginController = async (req: Request, res: Response) => {
   const values = req.body
 
@@ -67,3 +65,4 @@ export const registerController = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error + 'Error desconocido' })
   }
 }
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! este fichero se elimina ya que esta logica se trslada al cliente <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
