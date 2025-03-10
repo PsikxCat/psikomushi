@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { supabase } from '@/config/supabase'
 
-// > Pasar a un archivo aparte src/types/api.types.ts <-----------------------------
+// # <<<<<<<<<<<<<<<<<<<<------------- Pasar tipado a un archivo dedicado en src/types/api.types.ts ---------------->>>>>>>>>>>>>>>>>>>
 interface ApiResponse<T> {
   success: boolean
   message: string
@@ -26,8 +26,6 @@ export const getEmployees = async (req: Request, res: Response) => {
       return res.status(500).json(response)
     }
 
-    // console.log('Empleados en DB:', data)
-
     const response: ApiResponse<typeof data> = {
       success: true,
       message: 'Empleados obtenidos correctamente',
@@ -35,7 +33,7 @@ export const getEmployees = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json(response)
-  } catch (err: unknown) {
+  } catch (err) {
     if (err instanceof Error) {
       console.error('Error inesperado:', err.message)
       const response: ApiResponse<null> = {

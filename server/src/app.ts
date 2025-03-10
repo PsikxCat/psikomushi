@@ -4,7 +4,6 @@ import cors from 'cors'
 import morgan from 'morgan'
 
 import dbRoutes from '@/routes/db.routes'
-import authRoutes from '@/routes/auth.routes'
 
 // | Cargar variables de entorno
 if (process.env.NODE_ENV !== 'production') dotenv.config({ path: 'src/config/.env.local' })
@@ -28,6 +27,5 @@ app.use(express.urlencoded({ extended: true }))
 
 // # Routes ⬇️  //////////////////////////////////////////
 app.use('/db', dbRoutes)
-app.use('/api/auth', authRoutes) // ! eliminar esta ruta; la autenticacion de usuarios se traslada al cliente
 
 export default app
