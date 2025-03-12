@@ -28,9 +28,11 @@ export default function RegisterForm() {
   })
 
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
+    const { name, email, password, confirmPassword } = values
+
     try {
       // validar que contrasenas coincidan
-      if (values.password !== values.confirmPassword) {
+      if (password !== confirmPassword) {
         setError('Las contraseñas no coinciden')
         return
       }
@@ -40,21 +42,29 @@ export default function RegisterForm() {
       setSuccess(null)
 
       // registrar usuario
-      const { error: supabaseError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name },
+        },
       })
       // si hay error lanzar error para que sea capturado por el catch
-      if (supabaseError) throw supabaseError
+      if (authError) throw authError
 
-      // actualizar el perfil con el nombre del user
-      const { data: auth } = await supabase.auth.getSession()
-      if (auth.session) {
-        await supabase.auth.updateUser({
-          data: {
-            name: values.name,
-          },
-        })
+      const userId = authData.session?.user.id
+
+      // guardar usuario en base de datos
+      const { error } = await supabase.from('users').insert([
+        {
+          id: userId, // > Usar el mismo ID que auth.users
+          name,
+          email,
+        },
+      ])
+
+      if (error) {
+        console.error('Error al guardar usuario en base de datos:', error)
       }
 
       setSuccess('Registro exitoso!')
@@ -63,7 +73,7 @@ export default function RegisterForm() {
       // manejo de error con tipado estricto
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido al registrar'
       setError(errorMessage)
-      console.error('Error al registrar:', errorMessage)
+      console.error('Error al registrar:', error)
     } finally {
       setIsRegistering(false)
     }
