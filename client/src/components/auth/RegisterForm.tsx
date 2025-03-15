@@ -46,7 +46,10 @@ export default function RegisterForm() {
         email,
         password,
         options: {
-          data: { name },
+          data: {
+            name,
+            role: 'client',
+          },
         },
       })
       // si hay error lanzar error para que sea capturado por el catch

@@ -8,10 +8,14 @@ import {
   CustomersPage,
   LoginPage,
   RegisterPage,
+  SalesPage,
+  UserProfilePage,
+  UserOrdersPage,
+  CartPage,
 } from '@/pages'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
-import { RequireAdmin, RequireEmployee, RequireGuest } from '@/utils/routeGuard'
+import { RequireAdmin, RequireSeller, RequireDelivery, RequireGuest, RequireClient } from '@/utils/routeGuard'
 
 const App: React.FC = () => {
   return (
@@ -20,25 +24,41 @@ const App: React.FC = () => {
         {/* Rutas públicas */}
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
-          <Route path="/auth" element={<RequireGuest />}>
-            <Route path="login" element={<LoginPage />} />
-            <Route path="register" element={<RegisterPage />} />
+          {/* Rutas para visitantes (guest) */}
+          <Route element={<RequireGuest />}>
+            <Route path="auth/login" element={<LoginPage />} />
+            <Route path="auth/register" element={<RegisterPage />} />
           </Route>
+          {/* Rutas para clientes autenticados */}
+          <Route element={<RequireClient />}>
+            {/* <Route path="user" element={<UserLayout />}> // > Evaluar necesidad de UserLayout <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
+            <Route path="user" />
+            <Route index element={<UserProfilePage />} /> {/* Ej: Perfil del usuario */}
+            <Route path="orders" element={<UserOrdersPage />} /> {/* Historial de órdenes */}
+          </Route>
+          {/* Ruta específica para /cart */}
+          <Route path="cart" element={<CartPage />} /> {/* Carrito de compras */}
         </Route>
 
         {/* Rutas del panel de administración */}
         <Route path="/admin" element={<MainLayout />}>
           <Route element={<AdminLayout />}>
-            {/* Rutas accesibles para empleados y administradores */}
-            <Route element={<RequireEmployee />}>
-              <Route path="orders" element={<OrdersPage />} />
-              <Route path="customers" element={<CustomersPage />} />
+            {/* Rutas accesibles para vendedores (seller) */}
+            <Route element={<RequireSeller />}>
+              <Route path="sales" element={<SalesPage />} /> {/* Gestión de ventas */}
+              <Route path="orders" element={<OrdersPage />} /> {/* Gestión de órdenes */}
+            </Route>
+
+            {/* Rutas accesibles para repartidores (delivery) */}
+            <Route element={<RequireDelivery />}>
+              <Route path="orders" element={<OrdersPage />} /> {/* Gestión de órdenes */}
             </Route>
 
             {/* Rutas solo para administradores */}
             <Route element={<RequireAdmin />}>
-              <Route path="dashboard" element={<DashboardPage />} />
-              <Route path="products" element={<ProductsPage />} />
+              <Route path="dashboard" element={<DashboardPage />} /> {/* Dashboard */}
+              <Route path="products" element={<ProductsPage />} /> {/* Gestión de productos */}
+              <Route path="customers" element={<CustomersPage />} /> {/* Gestión de clientes */}
             </Route>
           </Route>
         </Route>

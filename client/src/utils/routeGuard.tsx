@@ -1,26 +1,59 @@
 import { useContext } from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 
 import { GlobalContext } from '@/context/GlobalContext'
 
-export const RequireAdmin = () => {
-  const { session } = useContext(GlobalContext)
-  const userRole = session?.user?.role
+type AllowedRoles = 'admin' | 'seller' | 'delivery' | 'client' | (string & {})
 
-  return userRole === 'admin' ? <Outlet /> : <Navigate to="/" replace />
+// Componente de protección de rutas reutilizable
+const ProtectedRoute = ({
+  allowedRoles,
+  redirectPath = '/',
+  children,
+}: {
+  allowedRoles: AllowedRoles[] | 'guest'
+  redirectPath?: string
+  children?: React.ReactNode
+}) => {
+  const { session, loading } = useContext(GlobalContext)
+  const location = useLocation()
+
+  // Mostrar un indicador de carga mientras se verifica la sesión
+  if (loading) {
+    return <div>Cargando...</div>
+  }
+
+  // Caso especial para rutas que requieren visitante (no autenticado)
+  if (allowedRoles === 'guest') {
+    if (session) {
+      return <Navigate to={redirectPath} state={{ from: location }} replace />
+    }
+    return children ? <>{children}</> : <Outlet />
+  }
+
+  // Si no hay sesión, redirigir a la página de login
+  if (!session) {
+    return <Navigate to="/auth/login" state={{ from: location }} replace />
+  }
+
+  // Verificar si el usuario tiene el rol adecuado
+  const userRole = session.user?.user_metadata?.role
+
+  if (!userRole || !allowedRoles.includes(userRole)) {
+    return <Navigate to={redirectPath} state={{ from: location }} replace />
+  }
+
+  // Si todo está bien, mostrar el contenido protegido
+  return children ? <>{children}</> : <Outlet />
 }
 
-export const RequireEmployee = () => {
-  const { session } = useContext(GlobalContext)
-  const userRole = session?.user?.role
+// Componentes específicos para cada rol
+export const RequireAdmin = () => <ProtectedRoute allowedRoles={['admin']} />
 
-  return userRole && ['admin', 'employee'].includes(userRole) ? <Outlet /> : <Navigate to="/" replace />
-}
+export const RequireSeller = () => <ProtectedRoute allowedRoles={['admin', 'seller']} />
 
-export const RequireGuest = () => {
-  const { session } = useContext(GlobalContext)
-  // Si el usuario está autenticado, redirigir a una página principal
-  if (session) return <Navigate to="/" replace />
+export const RequireDelivery = () => <ProtectedRoute allowedRoles={['admin', 'delivery']} />
 
-  return <Outlet />
-}
+export const RequireClient = () => <ProtectedRoute allowedRoles={['admin', 'client']} />
+
+export const RequireGuest = () => <ProtectedRoute allowedRoles="guest" redirectPath="/" />

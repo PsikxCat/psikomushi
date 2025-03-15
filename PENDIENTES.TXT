@@ -1,10 +1,13 @@
 
 * todo lo correspondiente al estilado de la app
-  - la idea es la simplicidad en este aspecto dando prioridad a la funcionalidad
+  - se debe definir un esquema de colores
   - empezamos con la seccion de productos en el panel del admin
 
 * terminar todo lo correspondiente con el esquema final de la base de datos
   - la idea general esta hecha, a medida que se requiera podran haber modificaciones
 
-* definir tiempos de entrega (maximo una semana)
+* definir tiempos de entrega (maximo una semana!!!!!!!!!!!!!!!!!!!!!!!!!)
   - se debe definir un tiempo de entrega para cada tarea
+
+-- crear un layout para la seccion de administracion diferenciada de la tienda (navbar, footer)
+-- configurar redireccion segun roles

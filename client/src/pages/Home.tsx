@@ -1,6 +1,3 @@
-import { useContext } from 'react'
-
-import { GlobalContext } from '@/context/GlobalContext'
 import { ProductCard } from '@/components'
 
 export default function Home() {
@@ -42,10 +39,6 @@ export default function Home() {
       description: 'Descripción breve del hongo comestible 6.',
     },
   ] // ############### Esto es un ejemplo, se debe traer los productos de la base de datos #####################################################
-
-  //traer el elemento session del contexto
-  const { session } = useContext(GlobalContext)
-  console.log('session: ', session)
 
   return (
     <section className="mx-0 flex w-full flex-col items-center gap-8 py-20">
