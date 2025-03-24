@@ -4,9 +4,9 @@ import { Menu } from '@/components'
 
 export default function Navbar() {
   return (
-    <section className="flex_center sticky top-0 h-[calc(50px+5vw)] w-full border-b bg-black/80">
+    <section className="sticky top-0 z-50 h-[max(70px,calc(50px+3vw))] w-full bg-black/80">
       <div className="h-full w-full">
-        <nav className="flex_center h-full w-full">
+        <nav className="ali flex h-full w-full items-center justify-between px-4">
           {/* Logo Psikoware */}
           <Link to="/" className="h-full w-auto">
             <img

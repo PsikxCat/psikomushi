@@ -19,13 +19,13 @@ export default function Menu() {
   // ################ ACA HAY BASTANTE POR CORREGIR 🔽🔽🔽🔽🔽🔽🔽🔽🔽 ###################################################################
 
   return (
-    <section className="absolute right-[50px]">
+    <section className="">
       <div
         className="flex_center cursor-pointer gap-1 text-[12px] text-accent transition"
         onClick={toogleOpen}
       >
-        <div className="w-[30px] overflow-hidden rounded-full sm:w-[45px]">
-          <img src="https://api.dicebear.com/9.x/notionists-neutral/svg?seed=Jasper" />
+        <div className="w-[40px] overflow-hidden rounded-full">
+          <img src="https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Adrian" />
         </div>
 
         {isOpen ? <FaAngleUp /> : <FaAngleDown />}
@@ -33,7 +33,7 @@ export default function Menu() {
 
       {/*  menu */}
       {isOpen && (
-        <div className="absolute right-0 top-[50px] z-50 flex w-[120px] flex-col gap-2 rounded-md border bg-background px-4 py-3">
+        <div className="absolute right-0 top-[calc(50px+3vw)] z-50 flex w-[150px] flex-col gap-2 rounded-b-md bg-black/80 px-4 py-3">
           {!session && (
             <Link to="/auth/login" onClick={toogleOpen}>
               Ingresa

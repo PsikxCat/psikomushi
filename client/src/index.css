@@ -51,7 +51,25 @@
     --chart-3: #FFD700; /* Color de gráfico dorado */
     --chart-4: #FF69B4; /* Color de gráfico rosa */
     --chart-5: #8A2BE2; /* Color de gráfico violeta */
-    --radius: 0.5rem; /* Radio de borde */  }
+    --radius: 0.5rem; /* Radio de borde */
+
+    /* Colores Tierrra */
+    --darkBrown: #5D4037;
+    --mediumBrown: #8D6E63;
+    --lightBrown: #BCAAA4;
+    --darkGreen: #33691E;
+    --oliveGreen: #7CB342;
+    --sand: #D7CCC8;
+    --cream: #EFEBE9;
+    --terracotta: #BF360C;
+    --mustard: #F57F17;
+    --darkText: #3E2723;
+    --lightText: #EFEBE9;
+    --darkBg: #3E2723;
+    --lightBg: #EFEBE9;
+
+  }
+
 }
 
 @layer utilities {

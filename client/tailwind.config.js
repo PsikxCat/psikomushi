@@ -1,17 +1,48 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   darkMode: ['class'],
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  prefix: '',
   theme: {
-    extend: {
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+    container: {
+      center: true,
+      padding: '2rem',
+      screens: {
+        '2xl': '1400px',
       },
+    },
+    extend: {
       colors: {
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
+        earth: {
+          // Colores tierra primarios
+          darkBrown: 'var(--darkBrown)',
+          mediumBrown: 'var(--mediumBrown)',
+          lightBrown: 'var(--lightBrown)',
+          // Colores tierra complementarios
+          darkGreen: 'var(--darkGreen)',
+          oliveGreen: 'var(--oliveGreen)',
+          sand: 'var(--sand)',
+          cream: 'var(--cream)',
+          // Colores tierra de acento
+          terracotta: 'var(--terracotta)',
+          mustard: 'var(--mustard)',
+          // Colores tierra para texto
+          darkText: 'var(--darkText)',
+          lightText: 'var(--lightText)',
+          // Colores para fondos
+          darkBg: 'var(--darkBg)',
+          lightBg: 'var(--lightBg)',
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         card: {
           DEFAULT: 'var(--card)',
           foreground: 'var(--card-foreground)',
@@ -40,9 +71,6 @@ export default {
           DEFAULT: 'var(--destructive)',
           foreground: 'var(--destructive-foreground)',
         },
-        border: 'var(--border)',
-        input: 'var(--input)',
-        ring: 'var(--ring)',
         chart: {
           1: 'var(--chart-1)',
           2: 'var(--chart-2)',
@@ -51,8 +79,15 @@ export default {
           5: 'var(--chart-5)',
         },
       },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
     },
   },
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require('tailwindcss-animate')],
 }
+
+export default config
