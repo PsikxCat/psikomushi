@@ -15,11 +15,11 @@ const ProtectedRoute = ({
   redirectPath?: string
   children?: React.ReactNode
 }) => {
-  const { session, loading } = useContext(GlobalContext)
+  const { session, authLoading } = useContext(GlobalContext)
   const location = useLocation()
 
   // Mostrar un indicador de carga mientras se verifica la sesión
-  if (loading) {
+  if (authLoading) {
     return <div>Cargando...</div>
   }
 

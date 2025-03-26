@@ -1,5 +1,6 @@
-export { default as Home } from './Home'
-export { default as CartPage } from './Cart'
+export { default as Home } from './global/Home'
+export { default as CartPage } from './global/Cart'
+export { default as StorePage } from './global/Store'
 
 export { default as DashboardPage } from './admin/DashboardPage'
 export { default as ProductsPage } from './admin/ProductsPage'

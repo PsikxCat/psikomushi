@@ -8,24 +8,28 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ imageUrl, name, description, isHomePage = false }: ProductCardProps) {
-  // Manejadores de eventos para los botones
   const handleViewDetails = () => {
     console.log(`Ver detalles de ${name}`)
-    // Aquí iría la lógica para redirigir al producto individual
+    // Aquí la lógica para redirigir al producto individual
   }
   const handleAddToCart = () => {
     console.log(`Añadir ${name} al carrito`)
-    // Aquí iría la lógica para añadir al carrito
+    // Aquí  la lógica para añadir al carrito
   }
 
   return (
-    <section className="group h-full overflow-hidden rounded-lg bg-earth-lightBg shadow-md transition-all duration-300 hover:shadow-xl">
+    <section
+      className={`group h-full overflow-hidden rounded-lg bg-earth-lightBg shadow-md transition-all duration-300 hover:shadow-xl ${
+        isHomePage ? 'cursor-pointer' : ''
+      }`}
+    >
+      {/* Imagen y boton agregar a carrito */}
       <section className="relative">
         <AspectRatio ratio={16 / 9}>
           <img
             src={imageUrl}
             alt={name}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className={`h-full w-full object-cover transition-transform duration-300 ${isHomePage ? 'group-hover:scale-105' : ''}`}
           />
         </AspectRatio>
 
@@ -56,9 +60,12 @@ export default function ProductCard({ imageUrl, name, description, isHomePage = 
         )}
       </section>
 
+      {/* Contenido */}
       <section className="flex flex-col p-4">
-        <h3 className="mb-2 text-lg font-semibold text-earth-darkBrown">{name}</h3>
-        <p className="mb-4 flex-grow text-sm text-earth-darkText">{description}</p>
+        <div>
+          <h3 className="mb-2 text-lg font-semibold text-earth-darkBrown">{name}</h3>
+          <p className="mb-4 min-h-[50px] flex-grow text-sm text-earth-darkText">{description}</p>
+        </div>
 
         {!isHomePage && (
           <button

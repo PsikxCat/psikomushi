@@ -16,8 +16,6 @@ export default function Menu() {
     setIsOpen((prev) => !prev)
   }
 
-  // ################ ACA HAY BASTANTE POR CORREGIR 🔽🔽🔽🔽🔽🔽🔽🔽🔽 ###################################################################
-
   return (
     <section className="">
       <div

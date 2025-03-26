@@ -1,6 +1,5 @@
 
 * todo lo correspondiente al estilado de la app
-  - se debe definir un esquema de colores
   - empezamos con la seccion de productos en el panel del admin
 
 * terminar todo lo correspondiente con el esquema final de la base de datos

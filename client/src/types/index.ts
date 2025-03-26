@@ -14,3 +14,10 @@ export interface EmployeeType {
   email: string
   hire_date: string
 }
+
+export interface ProductType {
+  id: number
+  imageUrl: string
+  name: string
+  description: string
+}

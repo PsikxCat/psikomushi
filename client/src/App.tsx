@@ -12,6 +12,7 @@ import {
   UserProfilePage,
   UserOrdersPage,
   CartPage,
+  StorePage,
 } from '@/pages'
 import MainLayout from '@/layouts/MainLayout'
 import AdminLayout from '@/layouts/AdminLayout'
@@ -23,21 +24,30 @@ const App: React.FC = () => {
       <Routes>
         {/* Rutas públicas */}
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          {/* Rutas para visitantes (guest) */}
+          {/* Rutas accesibles para todos */}
+          <Route>
+            <Route index element={<Home />} />
+            <Route path="store" element={<StorePage />} />
+            <Route path="cart" element={<CartPage />} /> {/* Carrito de compras */}
+          </Route>
+          {/* Rutas exclusivas para usuario no registrado (guest) */}
           <Route element={<RequireGuest />}>
             <Route path="auth/login" element={<LoginPage />} />
             <Route path="auth/register" element={<RegisterPage />} />
           </Route>
-          {/* Rutas para clientes autenticados */}
+          {/* Rutas accesibles para todos */}
+          <Route>
+            <Route index element={<Home />} />
+            <Route path="store" element={<ProductsPage />} />
+            <Route path="cart" element={<CartPage />} /> {/* Carrito de compras */}
+          </Route>
+          {/* Rutas para usuarios autenticados */}
           <Route element={<RequireClient />}>
             {/* <Route path="user" element={<UserLayout />}> // > Evaluar necesidad de UserLayout <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */}
             <Route path="user" />
             <Route index element={<UserProfilePage />} /> {/* Ej: Perfil del usuario */}
             <Route path="orders" element={<UserOrdersPage />} /> {/* Historial de órdenes */}
           </Route>
-          {/* Ruta específica para /cart */}
-          <Route path="cart" element={<CartPage />} /> {/* Carrito de compras */}
         </Route>
 
         {/* Rutas del panel de administración */}

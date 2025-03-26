@@ -1,87 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { ProductCard } from '@/components'
 
-// Definir el tipo de producto para mejorar la seguridad de tipos
-interface Product {
-  id: number
-  imageUrl: string
-  name: string
-  description: string
-}
+import { GlobalContext } from '@/context/GlobalContext'
 
 export default function Home() {
-  const allProducts = [
-    {
-      id: 1,
-      imageUrl: './hongo.webp', // Asegurarse que las rutas son correctas para archivos públicos
-      name: 'Shiitake Premium',
-      description: 'Hongo con sabor intenso ideal para platos orientales.',
-    },
-    {
-      id: 2,
-      imageUrl: './hongo.webp',
-      name: 'Portobello Selecto',
-      description: 'Perfectos para asar o rellenar con gran versatilidad.',
-    },
-    {
-      id: 3,
-      imageUrl: './hongo.webp',
-      name: 'Champiñones Silvestres',
-      description: 'Mezcla de champiñones silvestres de alta calidad.',
-    },
-    {
-      id: 4,
-      imageUrl: './hongo.webp',
-      name: 'Setas Ostra',
-      description: 'Delicadas setas con textura similar al marisco.',
-    },
-    {
-      id: 5,
-      imageUrl: './hongo.webp',
-      name: 'Enoki Gourmet',
-      description: 'Hongos finos ideales para sopas y ensaladas.',
-    },
-    {
-      id: 6,
-      imageUrl: './hongo.webp',
-      name: 'Trufas Negras',
-      description: 'El diamante de la cocina, aroma y sabor incomparables.',
-    },
-  ]
+  const navigate = useNavigate()
 
-  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
-  const [bannerProduct, setBannerProduct] = useState<Product | null>(null)
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  useEffect(() => {
-    // Proteger contra posibles errores si allProducts está vacío
-    if (allProducts.length === 0) return
-
-    // Seleccionar productos aleatorios para destacar (4 máximo)
-    const shuffled = [...allProducts].sort(() => 0.5 - Math.random())
-    const selected = shuffled.slice(0, Math.min(4, shuffled.length))
-
-    // Seleccionar un producto aleatorio para el banner que no esté en los destacados
-    const remainingProducts = shuffled.filter((product) => !selected.some((p) => p.id === product.id))
-
-    // Simular un pequeño retraso para asegurar que todo se cargue correctamente
-    setTimeout(() => {
-      setFeaturedProducts(selected)
-      if (remainingProducts.length > 0) {
-        setBannerProduct(remainingProducts[0])
-      }
-      setIsLoaded(true)
-    }, 10)
-  }, [])
-
-  // > Redirigir a la página de productos <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-  const handleClick = () => {
-    console.log('Botón presionado')
-  }
+  const { featuredProducts, isLoaded, bannerProduct } = useContext(GlobalContext)
 
   return (
     <section className="flex w-full flex-col gap-12 py-10">
-      {/* Banner Hero - con renderizado condicional mejorado */}
+      {/* Banner (con renderizado condicional mejorado) */}
       {isLoaded && bannerProduct ? (
         <section className="relative h-[50vh] w-full overflow-hidden shadow-xl">
           <div
@@ -90,7 +20,7 @@ export default function Home() {
               backgroundImage: `url(${bannerProduct.imageUrl})`,
             }}
           >
-            <div className="from-earth-darkBg/80 absolute inset-0 bg-gradient-to-r to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent" />
           </div>
 
           <div className="absolute inset-0 flex items-center p-8 md:p-16">
@@ -105,7 +35,7 @@ export default function Home() {
 
               <button
                 className="rounded-md bg-earth-mediumBrown px-6 py-3 font-medium tracking-wider text-white transition-colors hover:bg-earth-darkBrown"
-                onClick={handleClick}
+                onClick={() => navigate('/store')}
               >
                 Explorar catálogo
               </button>
@@ -146,7 +76,7 @@ export default function Home() {
                 name={product.name}
                 description={product.description}
                 // > crear una campo long description para la pagina del producto individual <<<<<<<<<<<<<<<<<<<<<<<
-                // isHomePage
+                isHomePage
               />
             ))
           ) : (
