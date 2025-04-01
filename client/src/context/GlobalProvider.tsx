@@ -12,48 +12,10 @@ interface GlobalProviderProps {
 export default function GlobalProvider({ children }: GlobalProviderProps) {
   const [session, setSession] = useState<Session | null | undefined>(undefined)
   const [authLoading, setAuthLoading] = useState(true)
+  const [allProducts, setAllProducts] = useState<ProductType[]>([])
   const [featuredProducts, setFeaturedProducts] = useState<ProductType[]>([])
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoading, setIsLoading] = useState(true) // Cambiado de isLoaded a isLoading e invertido el valor inicial
   const [bannerProduct, setBannerProduct] = useState<ProductType | null>(null)
-
-  const allProducts = [
-    {
-      id: 1,
-      imageUrl: './hongo.webp',
-      name: 'Shiitake Premium',
-      description: 'Hongo con sabor intenso ideal para platos orientales.',
-    },
-    {
-      id: 2,
-      imageUrl: './hongo.webp',
-      name: 'Portobello Selecto',
-      description: 'Perfectos para asar o rellenar con gran versatilidad.',
-    },
-    {
-      id: 3,
-      imageUrl: './hongo.webp',
-      name: 'Champiñones Silvestres',
-      description: 'Mezcla de champiñones silvestres de alta calidad.',
-    },
-    {
-      id: 4,
-      imageUrl: './hongo.webp',
-      name: 'Setas Ostra',
-      description: 'Delicadas setas con textura similar al marisco.',
-    },
-    {
-      id: 5,
-      imageUrl: './hongo.webp',
-      name: 'Enoki Gourmet',
-      description: 'Hongos finos ideales para sopas y ensaladas.',
-    },
-    {
-      id: 6,
-      imageUrl: './hongo.webp',
-      name: 'Trufas Negras',
-      description: 'El diamante de la cocina, aroma y sabor incomparables.',
-    },
-  ]
 
   // Mantener actualizada la sesión de usuario
   useEffect(() => {
@@ -85,6 +47,40 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Cargar todos los productos al iniciar
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true) // Indicamos que está cargando
+
+        const { data, error: supabaseError } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (supabaseError) throw supabaseError
+
+        // Asegurar formato correcto del JSONB
+        const parsedProducts = data.map((product) => ({
+          ...product,
+          image_urls: Array.isArray(product.image_urls) ? product.image_urls : [],
+        })) as ProductType[]
+
+        setAllProducts(parsedProducts)
+
+        // Pequeño retraso para efectos visuales de carga
+        setTimeout(() => {
+          setIsLoading(false) // Indicamos que ya no está cargando
+        }, 300)
+      } catch (err) {
+        console.error('Error al cargar productos:', err)
+        setIsLoading(false) // Aseguramos que isLoading se desactive incluso en caso de error
+      }
+    }
+
+    fetchProducts()
+  }, [])
+
   // Cargar productos destacados
   useEffect(() => {
     // Proteger contra posibles errores si allProducts está vacío
@@ -97,15 +93,12 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     // Seleccionar un producto aleatorio para el banner que no esté en los destacados
     const remainingProducts = shuffled.filter((product) => !selected.some((p) => p.id === product.id))
 
-    // Simular un pequeño retraso para asegurar que todo se cargue correctamente
-    setTimeout(() => {
-      setFeaturedProducts(selected)
-      if (remainingProducts.length > 0) {
-        setBannerProduct(remainingProducts[0])
-      }
-      setIsLoaded(true)
-    }, 10)
-  }, [])
+    // Actualizar estados
+    setFeaturedProducts(selected)
+    if (remainingProducts.length > 0) {
+      setBannerProduct(remainingProducts[0])
+    }
+  }, [allProducts])
 
   return (
     <GlobalContext.Provider
@@ -115,7 +108,8 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
         authLoading,
         allProducts,
         featuredProducts,
-        isLoaded,
+        isLoading,
+        setIsLoading,
         bannerProduct,
       }}
     >

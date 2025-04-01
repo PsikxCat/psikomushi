@@ -9,7 +9,8 @@ export interface GlobalContextType {
   authLoading: boolean
   allProducts: ProductType[]
   featuredProducts: ProductType[]
-  isLoaded: boolean
+  isLoading: boolean
+  setIsLoading: (loading: boolean) => void
   bannerProduct: ProductType | null
 }
 

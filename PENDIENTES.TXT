@@ -2,6 +2,9 @@
 * todo lo correspondiente al estilado de la app
   - empezamos con la seccion de productos en el panel del admin
 
+* 404
+  - se debe agregar una pagina 404 para cuando no se encuentre la pagina solicitada
+
 * terminar todo lo correspondiente con el esquema final de la base de datos
   - la idea general esta hecha, a medida que se requiera podran haber modificaciones
 

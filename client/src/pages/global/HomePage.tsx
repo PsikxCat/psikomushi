@@ -3,21 +3,51 @@ import { useNavigate } from 'react-router-dom'
 import { ProductCard } from '@/components'
 
 import { GlobalContext } from '@/context/GlobalContext'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+
+// Componente esqueleto para tarjetas de productos
+const ProductCardSkeleton = () => (
+  <div className="flex animate-pulse flex-col rounded-lg bg-earth-lightBg shadow-md">
+    {/* Imagen esqueleto */}
+    <AspectRatio ratio={16 / 9}>
+      <div className="h-48 w-full rounded-t-lg bg-earth-lightBrown"></div>
+    </AspectRatio>
+
+    {/* Contenido esqueleto */}
+    <div className="flex flex-col space-y-3 px-4 py-6">
+      {/* Título esqueleto */}
+      <div className="h-6 w-3/4 rounded bg-earth-lightBrown"></div>
+
+      {/* Descripción esqueleto */}
+      <div className="space-y-2">
+        <div className="h-4 rounded bg-earth-lightBrown"></div>
+        <div className="h-4 w-5/6 rounded bg-earth-lightBrown"></div>
+      </div>
+    </div>
+  </div>
+)
+
+const BannerSkeleton = () => (
+  <div className="relative h-[50vh] w-full animate-pulse overflow-hidden shadow-xl">
+    <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent" />
+  </div>
+)
 
 export default function Home() {
   const navigate = useNavigate()
-
-  const { featuredProducts, isLoaded, bannerProduct } = useContext(GlobalContext)
+  const { featuredProducts, isLoading, bannerProduct } = useContext(GlobalContext)
 
   return (
     <section className="flex w-full flex-col gap-12 py-10">
-      {/* Banner (con renderizado condicional mejorado) */}
-      {isLoaded && bannerProduct ? (
+      {/* Banner */}
+      {isLoading ? (
+        <BannerSkeleton />
+      ) : bannerProduct ? (
         <section className="relative h-[50vh] w-full overflow-hidden shadow-xl">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(${bannerProduct.imageUrl})`,
+              backgroundImage: `url(${bannerProduct.image_urls[0]})`,
             }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent" />
@@ -42,13 +72,9 @@ export default function Home() {
             </div>
           </div>
         </section>
-      ) : isLoaded ? (
-        <div className="flex h-[30vh] w-full items-center justify-center rounded-xl bg-earth-sand">
-          <p className="text-xl text-earth-darkBrown">No hay productos disponibles para mostrar</p>
-        </div>
       ) : (
         <div className="flex h-[30vh] w-full items-center justify-center rounded-xl bg-earth-sand">
-          <p className="text-xl text-earth-darkBrown">Cargando...</p>
+          <p className="text-xl text-earth-darkBrown">No hay productos disponibles para mostrar</p>
         </div>
       )}
 
@@ -68,19 +94,16 @@ export default function Home() {
           </span>
         </h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {featuredProducts.length > 0 ? (
-            featuredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                imageUrl={product.imageUrl}
-                name={product.name}
-                description={product.description}
-                // > crear una campo long description para la pagina del producto individual <<<<<<<<<<<<<<<<<<<<<<<
-                isHomePage
-              />
-            ))
+          {isLoading ? (
+            Array(4)
+              .fill(0)
+              .map((_, index) => <ProductCardSkeleton key={index} />)
+          ) : featuredProducts.length > 0 ? (
+            featuredProducts.map((product) => <ProductCard key={product.id} product={product} isHomePage />)
           ) : (
-            <p className="col-span-full text-center text-earth-darkBrown">Cargando productos destacados...</p>
+            <p className="col-span-full text-center text-earth-darkBrown">
+              No hay productos destacados disponibles
+            </p>
           )}
         </div>
       </section>

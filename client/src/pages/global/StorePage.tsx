@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from 'react'
 import { GlobalContext } from '@/context/GlobalContext'
-import { ProductCard } from '@/components'
+import { ProductCard, Spinner } from '@/components'
 
 export default function StorePage() {
   const { allProducts, bannerProduct } = useContext(GlobalContext)
@@ -12,7 +12,7 @@ export default function StorePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 200)
+    }, 300)
 
     return () => clearTimeout(timer)
   }, [])
@@ -22,10 +22,8 @@ export default function StorePage() {
     if (searchTerm.trim() === '') {
       setFilteredProducts(allProducts)
     } else {
-      const filtered = allProducts.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.description.toLowerCase().includes(searchTerm.toLowerCase()),
+      const filtered = allProducts.filter((product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()),
       )
       setFilteredProducts(filtered)
     }
@@ -40,7 +38,7 @@ export default function StorePage() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url(${bannerProduct?.imageUrl})`,
+            backgroundImage: `url(${bannerProduct?.image_urls[0]})`,
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black/90 to-transparent" />
@@ -93,18 +91,12 @@ export default function StorePage() {
       <section className="min-h-[50vh] rounded-lg bg-earth-sand px-4 py-8 shadow-lg">
         {isLoading ? (
           <div className="flex h-[30vh] items-center justify-center">
-            <p className="text-xl text-earth-darkBrown">Cargando productos...</p>
+            <Spinner visible={isLoading} />
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                imageUrl={product.imageUrl}
-                name={product.name}
-                description={product.description}
-                isHomePage={false}
-              />
+              <ProductCard key={product.id} product={product} isHomePage={false} />
             ))}
           </div>
         ) : (

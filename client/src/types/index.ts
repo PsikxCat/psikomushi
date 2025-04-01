@@ -16,8 +16,12 @@ export interface EmployeeType {
 }
 
 export interface ProductType {
-  id: number
-  imageUrl: string
+  id: string
+  image_urls: string[]
   name: string
-  description: string
+  short_description: string
+  long_description: string
+  unit_price: number
+  weight: string
+  stock: number
 }
