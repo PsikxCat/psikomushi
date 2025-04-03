@@ -34,8 +34,10 @@ const BannerSkeleton = () => (
 )
 
 export default function Home() {
+  const { productState } = useContext(GlobalContext)
+  const { featuredProducts, isLoading, bannerProduct } = productState
+
   const navigate = useNavigate()
-  const { featuredProducts, isLoading, bannerProduct } = useContext(GlobalContext)
 
   return (
     <section className="flex w-full flex-col gap-12 py-10">

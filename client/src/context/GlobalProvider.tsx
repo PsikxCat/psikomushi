@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Session } from '@supabase/supabase-js'
 
 import { GlobalContext } from './GlobalContext'
@@ -12,12 +12,43 @@ interface GlobalProviderProps {
 export default function GlobalProvider({ children }: GlobalProviderProps) {
   const [session, setSession] = useState<Session | null | undefined>(undefined)
   const [authLoading, setAuthLoading] = useState(true)
-  const [allProducts, setAllProducts] = useState<ProductType[]>([])
-  const [featuredProducts, setFeaturedProducts] = useState<ProductType[]>([])
-  const [isLoading, setIsLoading] = useState(true) // Cambiado de isLoaded a isLoading e invertido el valor inicial
-  const [bannerProduct, setBannerProduct] = useState<ProductType | null>(null)
+  const [productState, setProductState] = useState({
+    allProducts: [] as ProductType[],
+    featuredProducts: [] as ProductType[],
+    isLoading: true,
+    bannerProduct: null as ProductType | null,
+  })
+  const [cartItems, setCartItems] = useState<ProductType[] | []>([])
 
-  // Mantener actualizada la sesión de usuario
+  // useEffect(() => console.log('session', session), [session])
+
+  // | MEMOIZACION DE FUNCIONES PARA EVITAR RE-RENDERIZADOS INNECESARIOS
+  // función para manejar la sesión
+  const handleSetSession = useCallback((newSession: Session | null | undefined) => {
+    setSession(newSession)
+  }, [])
+
+  // funciones para manejar el carrito
+  const handleAddToCart = useCallback((product: ProductType) => {
+    setCartItems((prevItems) => {
+      // Verificar si el producto ya está en el carrito
+      const existingItem = prevItems.find((item) => item.id === product.id)
+      if (existingItem) {
+        return prevItems // Evitar duplicados (o implementar cantidad si es necesario)
+      }
+      return [...prevItems, product]
+    })
+  }, [])
+
+  const handleRemoveFromCart = useCallback((productId: string) => {
+    setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId))
+  }, [])
+
+  const handleClearCart = useCallback(() => {
+    setCartItems([])
+  }, [])
+
+  // | EFFECT PARA OBTENER LA SESIÓN DE AUTENTICACIÓN
   useEffect(() => {
     const fetchSession = async () => {
       try {
@@ -47,11 +78,11 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     return () => subscription.unsubscribe()
   }, [])
 
-  // Cargar todos los productos al iniciar
+  // | EFFECT PARA CARGAR TODOS LOS PRODUCTOS AL INICIAR
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setIsLoading(true) // Indicamos que está cargando
+        setProductState((prev) => ({ ...prev, isLoading: true }))
 
         const { data, error: supabaseError } = await supabase
           .from('products')
@@ -60,60 +91,60 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
 
         if (supabaseError) throw supabaseError
 
-        // Asegurar formato correcto del JSONB
+        // Procesar productos
         const parsedProducts = data.map((product) => ({
           ...product,
           image_urls: Array.isArray(product.image_urls) ? product.image_urls : [],
         })) as ProductType[]
 
-        setAllProducts(parsedProducts)
+        // Seleccionar productos destacados
+        const shuffled = [...parsedProducts].sort(() => 0.5 - Math.random())
+        const selected = shuffled.slice(0, Math.min(4, shuffled.length))
+        const remainingProducts = shuffled.filter((product) => !selected.some((p) => p.id === product.id))
 
-        // Pequeño retraso para efectos visuales de carga
+        // Un solo setState para actualizar todo el estado de productos
         setTimeout(() => {
-          setIsLoading(false) // Indicamos que ya no está cargando
+          setProductState({
+            allProducts: parsedProducts,
+            featuredProducts: selected,
+            bannerProduct: remainingProducts.length > 0 ? remainingProducts[0] : null,
+            isLoading: false,
+          })
         }, 300)
       } catch (err) {
         console.error('Error al cargar productos:', err)
-        setIsLoading(false) // Aseguramos que isLoading se desactive incluso en caso de error
+        setProductState((prev) => ({ ...prev, isLoading: false }))
       }
     }
 
     fetchProducts()
   }, [])
 
-  // Cargar productos destacados
-  useEffect(() => {
-    // Proteger contra posibles errores si allProducts está vacío
-    if (allProducts.length === 0) return
-
-    // Seleccionar productos aleatorios para destacar (4 máximo)
-    const shuffled = [...allProducts].sort(() => 0.5 - Math.random())
-    const selected = shuffled.slice(0, Math.min(4, shuffled.length))
-
-    // Seleccionar un producto aleatorio para el banner que no esté en los destacados
-    const remainingProducts = shuffled.filter((product) => !selected.some((p) => p.id === product.id))
-
-    // Actualizar estados
-    setFeaturedProducts(selected)
-    if (remainingProducts.length > 0) {
-      setBannerProduct(remainingProducts[0])
-    }
-  }, [allProducts])
-
-  return (
-    <GlobalContext.Provider
-      value={{
-        session,
-        setSession,
-        authLoading,
-        allProducts,
-        featuredProducts,
-        isLoading,
-        setIsLoading,
-        bannerProduct,
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
+  // Memoizar el valor del contexto para evitar re-renderizados innecesarios
+  const contextValue = useMemo(
+    () => ({
+      session,
+      setSession: handleSetSession,
+      authLoading,
+      productState,
+      setProductState,
+      cartItems,
+      addToCart: handleAddToCart,
+      removeFromCart: handleRemoveFromCart,
+      clearCart: handleClearCart,
+    }),
+    [
+      session,
+      handleSetSession,
+      authLoading,
+      productState,
+      setProductState,
+      cartItems,
+      handleAddToCart,
+      handleRemoveFromCart,
+      handleClearCart,
+    ],
   )
+
+  return <GlobalContext.Provider value={contextValue}>{children}</GlobalContext.Provider>
 }

@@ -3,7 +3,9 @@ import { GlobalContext } from '@/context/GlobalContext'
 import { ProductCard, Spinner } from '@/components'
 
 export default function StorePage() {
-  const { allProducts, bannerProduct } = useContext(GlobalContext)
+  const { productState } = useContext(GlobalContext)
+  const { allProducts, bannerProduct } = productState
+
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredProducts, setFilteredProducts] = useState(allProducts)
   const [isLoading, setIsLoading] = useState(true)

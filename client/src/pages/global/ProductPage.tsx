@@ -8,13 +8,16 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Spinner } from '@/components'
 
 export default function ProductPage() {
-  const [product, setProduct] = useState<ProductType | null>(null)
-  const [quantity, setQuantity] = useState(1)
-  const [selectedImage, setSelectedImage] = useState('')
+  const { productState } = useContext(GlobalContext)
+  const { allProducts } = productState
 
   const { productId } = useParams()
   const navigate = useNavigate()
-  const { allProducts, isLoading, setIsLoading } = useContext(GlobalContext)
+
+  const [product, setProduct] = useState<ProductType | null>(null)
+  const [quantity, setQuantity] = useState(1)
+  const [selectedImage, setSelectedImage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
   // Traer el producto al cargar la página
   useEffect(() => {
@@ -60,6 +63,7 @@ export default function ProductPage() {
     }
   }
 
+  // >>>>>>>>>>>>>>>>>>>>>>> Lógica para añadir al carrito <<<<<<<<<<<<<<<<<<<<<<
   const handleAddToCart = () => {
     if (!product) return
 
@@ -95,40 +99,6 @@ export default function ProductPage() {
 
   return (
     <section className="mx-auto max-w-[2200px] px-2 py-8">
-      {/* Breadcrumb */}
-      {/* <div className="mb-6">
-        <nav className="flex" aria-label="Breadcrumb">
-          <ol className="inline-flex items-center space-x-1 md:space-x-3">
-            <li className="inline-flex items-center">
-              <button
-                onClick={() => navigate('/')}
-                className="inline-flex items-center text-sm font-medium text-earth-darkBrown hover:text-earth-terracotta"
-              >
-                Inicio
-              </button>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <button
-                  onClick={() => navigate('/store')}
-                  className="text-sm font-medium text-earth-darkBrown hover:text-earth-terracotta"
-                >
-                  Tienda
-                </button>
-              </div>
-            </li>
-            <li aria-current="page">
-              <div className="flex items-center">
-                <span className="mx-2 text-gray-400">/</span>
-                <span className="truncate text-sm font-medium text-earth-terracotta">{product.name}</span>
-              </div>
-            </li>
-          </ol>
-        </nav>
-      </div> */}
-
-      {/* Contenido principal */}
       <section className="grid grid-cols-1 gap-8 rounded-lg bg-earth-cream p-6 shadow-lg lg:grid-cols-2">
         {/* Galería de imágenes */}
         <section className="space-y-4">
