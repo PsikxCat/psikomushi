@@ -1,5 +1,7 @@
-import { useState, useContext, useEffect } from 'react'
+import { useState, useContext, useEffect, ChangeEvent } from 'react'
 import { GlobalContext } from '@/context/GlobalContext'
+import { FiSearch } from 'react-icons/fi'
+
 import { ProductCard, Spinner } from '@/components'
 
 export default function StorePage() {
@@ -31,7 +33,7 @@ export default function StorePage() {
     }
   }, [searchTerm, allProducts])
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)
 
   return (
     <section className="flex w-full flex-col gap-8 py-10">
@@ -48,7 +50,7 @@ export default function StorePage() {
 
         <div className="absolute inset-0 flex items-center p-8">
           <div className="max-w-lg">
-            <h1 className="mb-2 text-3xl font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] md:text-4xl md:text-5xl">
+            <h1 className="mb-2 text-3xl font-bold text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] md:text-5xl">
               Catálogo de Hongos
             </h1>
             <p className="text-earth-sand drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)] md:text-xl">
@@ -65,18 +67,7 @@ export default function StorePage() {
 
           <div className="relative">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <svg
-                className="h-5 w-5 text-earth-darkBrown"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <FiSearch className="h-5 w-5 text-earth-darkText" />
             </div>
             <input
               type="text"

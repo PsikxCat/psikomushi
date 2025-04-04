@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { FiShoppingCart, FiArrowLeft } from 'react-icons/fi'
 
 import { supabase } from '@/utils/supabase'
 import { ProductType } from '@/types'
@@ -8,7 +9,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Spinner } from '@/components'
 
 export default function ProductPage() {
-  const { productState } = useContext(GlobalContext)
+  const { productState, handleAddToCart } = useContext(GlobalContext)
   const { allProducts } = productState
 
   const { productId } = useParams()
@@ -61,17 +62,6 @@ export default function ProductPage() {
     if (newQuantity >= 1 && product && newQuantity <= product.stock) {
       setQuantity(newQuantity)
     }
-  }
-
-  // >>>>>>>>>>>>>>>>>>>>>>> Lógica para añadir al carrito <<<<<<<<<<<<<<<<<<<<<<
-  const handleAddToCart = () => {
-    if (!product) return
-
-    console.log(`Añadiendo al carrito: ${quantity} unidades de ${product.name}`)
-    // Aquí la lógica para añadir al carrito
-
-    // Mostrar algún tipo de notificación (opcional)
-    alert(`${quantity} unidades de ${product.name} añadidas al carrito`)
   }
 
   if (isLoading) {
@@ -205,7 +195,7 @@ export default function ProductPage() {
             </div>
 
             <button
-              onClick={handleAddToCart}
+              onClick={() => handleAddToCart(product)}
               disabled={product.stock === 0}
               className={`flex items-center rounded-md px-6 py-3 font-medium text-white ${
                 product.stock === 0
@@ -213,22 +203,7 @@ export default function ProductPage() {
                   : 'bg-earth-terracotta transition-colors hover:bg-earth-darkBrown'
               }`}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2"
-              >
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
+              <FiShoppingCart className="mr-2" size={24} />
               {product.stock === 0 ? 'Agotado' : 'Añadir al carrito'}
             </button>
           </div>
@@ -247,21 +222,7 @@ export default function ProductPage() {
               onClick={() => navigate('/store')}
               className="flex items-center text-earth-darkBrown hover:text-earth-terracotta"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-2"
-              >
-                <path d="m12 19-7-7 7-7" />
-                <path d="M19 12H5" />
-              </svg>
+              <FiArrowLeft className="mr-2" size={20} />
               Volver a la tienda
             </button>
           </div>

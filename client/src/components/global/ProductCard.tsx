@@ -1,4 +1,6 @@
+import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FiShoppingCart } from 'react-icons/fi'
 
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { ProductType } from '@/types'
@@ -8,16 +10,14 @@ interface ProductCardProps {
   isHomePage?: boolean
 }
 
+import { GlobalContext } from '@/context/GlobalContext'
 export default function ProductCard({ product, isHomePage = false }: ProductCardProps) {
-  const { image_urls, name, short_description } = product
+  const { handleAddToCart } = useContext(GlobalContext)
   const navigate = useNavigate()
 
-  const handleViewDetails = () => navigate(`/store/${product.id}`)
+  const { image_urls, name, short_description } = product
 
-  const handleAddToCart = () => {
-    console.log(`Añadir ${name} al carrito`)
-    // Aquí la lógica para añadir al carrito
-  }
+  const handleViewDetails = () => navigate(`/store/${product.id}`)
 
   return (
     <section
@@ -40,25 +40,11 @@ export default function ProductCard({ product, isHomePage = false }: ProductCard
         {!isHomePage && (
           <div className="absolute bottom-0 left-0 right-0 flex justify-end p-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <button
-              onClick={handleAddToCart}
+              onClick={() => handleAddToCart(product)}
               className="mr-2 rounded-full bg-earth-sand p-2 text-earth-darkText shadow-md transition-colors hover:bg-earth-terracotta"
               aria-label="Añadir al carrito"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
+              <FiShoppingCart size={20} />
             </button>
           </div>
         )}

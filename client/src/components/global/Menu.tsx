@@ -17,7 +17,7 @@ export default function Menu() {
   }
 
   return (
-    <section className="">
+    <section>
       <div
         className="flex_center cursor-pointer gap-1 text-[12px] text-accent transition"
         onClick={toogleOpen}

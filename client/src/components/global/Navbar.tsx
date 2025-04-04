@@ -17,8 +17,14 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Menu */}
-          <Menu />
+          {/* Botón de carrito & Menu */}
+          <div className="flex h-full w-auto items-center gap-4">
+            <Link to="/cart" className="flex_center h-full w-auto">
+              <div className="relative flex h-full w-auto items-center justify-center">carrito</div>
+            </Link>
+
+            <Menu />
+          </div>
         </nav>
       </div>
     </section>

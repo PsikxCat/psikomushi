@@ -19,6 +19,8 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     bannerProduct: null as ProductType | null,
   })
   const [cartItems, setCartItems] = useState<ProductType[] | []>([])
+  console.log('cartItems en GlobalProvider', cartItems)
+  // >>>>>>>>>>>>>> GENERAR LA PERSISTENCIA DE DATOS DEL CARRITO EN EL LOCAL STORAGE <<<<<<<<<<<<
 
   // useEffect(() => console.log('session', session), [session])
 
@@ -31,11 +33,13 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
   // funciones para manejar el carrito
   const handleAddToCart = useCallback((product: ProductType) => {
     setCartItems((prevItems) => {
+      console.log('prevItems', prevItems)
       // Verificar si el producto ya está en el carrito
       const existingItem = prevItems.find((item) => item.id === product.id)
-      if (existingItem) {
-        return prevItems // Evitar duplicados (o implementar cantidad si es necesario)
-      }
+      console.log('existingItem', existingItem)
+
+      if (existingItem) return prevItems // Evitar duplicados (o implementar cantidad si es necesario)
+
       return [...prevItems, product]
     })
   }, [])
@@ -129,9 +133,9 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
       productState,
       setProductState,
       cartItems,
-      addToCart: handleAddToCart,
-      removeFromCart: handleRemoveFromCart,
-      clearCart: handleClearCart,
+      handleAddToCart,
+      handleRemoveFromCart,
+      handleClearCart,
     }),
     [
       session,

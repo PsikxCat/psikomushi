@@ -7,11 +7,6 @@ export interface GlobalContextType {
   session: Session | null | undefined
   setSession: (session: Session | null) => void
   authLoading: boolean
-  // allProducts: ProductType[]
-  //   featuredProducts: ProductType[]
-  // isLoading: boolean
-  // setIsLoading: (loading: boolean) => void
-  // bannerProduct: ProductType | null
   productState: {
     allProducts: ProductType[]
     featuredProducts: ProductType[]
@@ -27,6 +22,9 @@ export interface GlobalContextType {
     }>
   >
   cartItems: ProductType[]
+  handleAddToCart: (product: ProductType) => void
+  handleRemoveFromCart: (productId: string) => void
+  handleClearCart: () => void
 }
 
 export const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType)
