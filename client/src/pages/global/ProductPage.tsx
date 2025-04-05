@@ -211,9 +211,7 @@ export default function ProductPage() {
           {/* Información adicional */}
           <div className="mt-8 rounded-md bg-earth-sand p-4">
             <h3 className="font-medium text-earth-darkBrown">Información de entrega</h3>
-            <p className="mt-2 text-sm text-earth-darkText">
-              Entregamos en 24-48 horas laborables. Envío gratuito para pedidos superiores a $50.
-            </p>
+            <p className="mt-2 text-sm text-earth-darkText">Entregamos en 24-48 horas laborables.</p>
           </div>
 
           {/* Botón para volver a la tienda */}

@@ -7,27 +7,17 @@ import { GlobalContext } from '@/context/GlobalContext'
 import CartItem from '@/components/cart/CartItem'
 
 export default function CartPage() {
-  const { cartItems, handleRemoveFromCart, handleClearCart } = useContext(GlobalContext)
+  const { cartItems, handleRemoveFromCart, handleClearCart, handleQuantityChange } = useContext(GlobalContext)
   const navigate = useNavigate()
 
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>({})
   const [subtotal, setSubtotal] = useState(0)
   const [tax, setTax] = useState(0)
   const [total, setTotal] = useState(0)
 
-  // Inicializar cantidades cuando cambian los items del carrito
-  useEffect(() => {
-    const newQuantities: { [key: string]: number } = {}
-    cartItems.forEach((item) => {
-      newQuantities[item.id] = quantities[item.id] || 1
-    })
-    setQuantities(newQuantities)
-  }, [cartItems])
-
   // Calcular totales cuando cambian las cantidades o los items
   useEffect(() => {
     const calculatedSubtotal = cartItems.reduce(
-      (sum, item) => sum + item.unit_price * (quantities[item.id] || 1),
+      (sum, { cartItem, quantity }) => sum + cartItem.unit_price * quantity,
       0,
     )
     const calculatedTax = calculatedSubtotal * 0.19 // IVA del 19%
@@ -35,15 +25,7 @@ export default function CartPage() {
     setSubtotal(calculatedSubtotal)
     setTax(calculatedTax)
     setTotal(calculatedSubtotal + calculatedTax)
-  }, [cartItems, quantities])
-
-  const handleQuantityChange = (itemId: string, amount: number) => {
-    setQuantities((prev) => {
-      const currentQty = prev[itemId] || 1
-      const newQty = Math.max(1, currentQty + amount) // Mínimo 1 unidad
-      return { ...prev, [itemId]: newQty }
-    })
-  }
+  }, [cartItems])
 
   const handleCheckout = () => {
     // >>>>>>>>>>>> Lógica para proceder al pago <<<<<<<<<<<<
@@ -85,11 +67,11 @@ export default function CartPage() {
           </div>
 
           {/* Productos en el carrito */}
-          {cartItems.map((item) => (
+          {cartItems.map(({ cartItem, quantity }) => (
             <CartItem
-              key={item.id}
-              item={item}
-              quantity={quantities[item.id] || 1}
+              key={cartItem.id}
+              cartItem={cartItem}
+              quantity={quantity || 1}
               onQuantityChange={handleQuantityChange}
               onRemove={handleRemoveFromCart}
             />

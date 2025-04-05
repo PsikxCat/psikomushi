@@ -1,8 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+// > el contexto empieza a manejar demasiadas responsabilidades (auth, carga de productos, manejo de carrito), evaluar la division de estas
+
+import { useState, useEffect, useCallback, useMemo, SetStateAction } from 'react'
 import { Session } from '@supabase/supabase-js'
 
 import { GlobalContext } from './GlobalContext'
-import { ProductType } from '@/types'
+import { ProductType, CartItemType } from '@/types'
 import { supabase } from '@/utils/supabase'
 
 interface GlobalProviderProps {
@@ -18,38 +20,43 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     isLoading: true,
     bannerProduct: null as ProductType | null,
   })
-  const [cartItems, setCartItems] = useState<ProductType[] | []>([])
-  console.log('cartItems en GlobalProvider', cartItems)
-  // >>>>>>>>>>>>>> GENERAR LA PERSISTENCIA DE DATOS DEL CARRITO EN EL LOCAL STORAGE <<<<<<<<<<<<
-
-  // useEffect(() => console.log('session', session), [session])
+  const [cartItems, setCartItems] = useState<CartItemType[] | []>([])
 
   // | MEMOIZACION DE FUNCIONES PARA EVITAR RE-RENDERIZADOS INNECESARIOS
   // función para manejar la sesión
-  const handleSetSession = useCallback((newSession: Session | null | undefined) => {
+  const handleSetSession = useCallback((newSession: SetStateAction<Session | null | undefined>) => {
     setSession(newSession)
   }, [])
 
   // funciones para manejar el carrito
   const handleAddToCart = useCallback((product: ProductType) => {
     setCartItems((prevItems) => {
-      console.log('prevItems', prevItems)
       // Verificar si el producto ya está en el carrito
-      const existingItem = prevItems.find((item) => item.id === product.id)
-      console.log('existingItem', existingItem)
+      const existingItem = prevItems.find(({ cartItem }) => cartItem.id === product.id)
+      if (existingItem) return prevItems
 
-      if (existingItem) return prevItems // Evitar duplicados (o implementar cantidad si es necesario)
-
-      return [...prevItems, product]
+      return [...prevItems, { cartItem: product, quantity: 1 }]
     })
   }, [])
 
   const handleRemoveFromCart = useCallback((productId: string) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== productId))
+    setCartItems((prevItems) => prevItems.filter(({ cartItem }) => cartItem.id !== productId))
   }, [])
 
   const handleClearCart = useCallback(() => {
     setCartItems([])
+  }, [])
+
+  const handleQuantityChange = useCallback((productId: string, amount: number) => {
+    setCartItems((prevItems) => {
+      return prevItems.map((item) => {
+        if (item.cartItem.id === productId) {
+          const newQuantity = Math.max(1, item.quantity + amount) // Mínimo 1 unidad
+          return { ...item, quantity: newQuantity }
+        }
+        return item
+      })
+    })
   }, [])
 
   // | EFFECT PARA OBTENER LA SESIÓN DE AUTENTICACIÓN
@@ -124,6 +131,36 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     fetchProducts()
   }, [])
 
+  // | EFFECT PARA CARGAR LOS PRODUCTOS DEL CARRITO DESDE LOCAL STORAGE
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cart')
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart)
+        // Verificar que el formato sea [{cartItem, quantity}]
+        if (Array.isArray(parsedCart) && parsedCart.length > 0 && 'cartItem' in parsedCart[0]) {
+          setCartItems(parsedCart)
+        } else {
+          console.warn('Formato de carrito en localStorage no es válido')
+        }
+      } catch (e) {
+        console.error('Error parseando el carrito desde localStorage:', e)
+      }
+    }
+  }, [])
+
+  // | EFFECT PARA GUARDAR LOS PRODUCTOS DEL CARRITO Y SUS CANTIDADES EN LOCAL STORAGE
+  useEffect(() => {
+    ;(() => {
+      const cartToSave = cartItems.map(({ cartItem, quantity }) => ({
+        cartItem,
+        quantity,
+      }))
+
+      localStorage.setItem('cart', JSON.stringify(cartToSave))
+    })()
+  }, [cartItems])
+
   // Memoizar el valor del contexto para evitar re-renderizados innecesarios
   const contextValue = useMemo(
     () => ({
@@ -136,6 +173,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
       handleAddToCart,
       handleRemoveFromCart,
       handleClearCart,
+      handleQuantityChange,
     }),
     [
       session,
@@ -147,6 +185,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
       handleAddToCart,
       handleRemoveFromCart,
       handleClearCart,
+      handleQuantityChange,
     ],
   )
 

@@ -25,3 +25,8 @@ export interface ProductType {
   weight: string
   stock: number
 }
+
+export interface CartItemType {
+  cartItem: ProductType
+  quantity: number
+}

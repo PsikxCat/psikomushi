@@ -3,13 +3,13 @@ import { ProductType } from '@/types'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 
 interface CartItemProps {
-  item: ProductType
+  cartItem: ProductType
   quantity: number
   onQuantityChange: (itemId: string, amount: number) => void
   onRemove: (itemId: string) => void
 }
 
-export default function CartItem({ item, quantity, onQuantityChange, onRemove }: CartItemProps) {
+export default function CartItem({ cartItem: item, quantity, onQuantityChange, onRemove }: CartItemProps) {
   return (
     <section className="grid grid-cols-1 gap-4 rounded-lg bg-earth-cream p-4 shadow-sm md:grid-cols-[1fr_3fr_1fr_1fr_auto]">
       {/* Imagen del producto */}
