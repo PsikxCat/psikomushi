@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 
 import { GlobalContext } from '@/context/GlobalContext'
-import LogoutButton from './LogoutButton'
+import LogoutButton from '../auth/LogoutButton'
 
 export default function Menu() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
