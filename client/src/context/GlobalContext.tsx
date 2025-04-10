@@ -23,7 +23,7 @@ export interface GlobalContextType {
     }>
   >
   cartItems: CartItemType[]
-  handleAddToCart: (product: ProductType) => void
+  handleAddToCart: (product: ProductType, quantity?: number) => void
   handleRemoveFromCart: (productId: string) => void
   handleClearCart: () => void
   handleQuantityChange: (productId: string, amount: number) => void

@@ -32,7 +32,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
   }, [])
 
   // funciones para manejar el carrito
-  const handleAddToCart = useCallback((product: ProductType) => {
+  const handleAddToCart = useCallback((product: ProductType, quantity: number = 1) => {
     setCartItems((prevItems) => {
       // Verificar si el producto ya está en el carrito
       const existingItem = prevItems.find(({ cartItem }) => cartItem.id === product.id)
@@ -50,7 +50,7 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
         variant: 'default',
       })
 
-      return [...prevItems, { cartItem: product, quantity: 1 }]
+      return [...prevItems, { cartItem: product, quantity }]
     })
   }, [])
 

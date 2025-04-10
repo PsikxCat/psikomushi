@@ -1,6 +1,7 @@
 import { LuTrash2 } from 'react-icons/lu'
 import { ProductType } from '@/types'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Link } from 'react-router-dom'
 
 interface CartItemProps {
   cartItem: ProductType
@@ -13,7 +14,7 @@ export default function CartItem({ cartItem: item, quantity, onQuantityChange, o
   return (
     <section className="grid grid-cols-1 gap-4 rounded-lg bg-earth-cream p-4 shadow-sm md:grid-cols-[1fr_3fr_1fr_1fr_auto]">
       {/* Imagen del producto */}
-      <div className="h-32 overflow-hidden rounded-md md:h-full md:w-full">
+      <Link to={`/store/${item.id}`} className="h-32 overflow-hidden rounded-md md:h-full md:w-full">
         <div className="hidden md:block">
           <AspectRatio ratio={1 / 1}>
             <img src={item.image_urls[0]} alt={item.name} className="h-full w-full object-cover" />
@@ -25,7 +26,7 @@ export default function CartItem({ cartItem: item, quantity, onQuantityChange, o
             <img src={item.image_urls[0]} alt={item.name} className="object-cover" />
           </AspectRatio>
         </div>
-      </div>
+      </Link>
 
       {/* Información del producto */}
       <div className="flex max-w-[350px] flex-col md:pr-4">

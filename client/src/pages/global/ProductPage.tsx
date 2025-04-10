@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { FiShoppingCart, FiArrowLeft } from 'react-icons/fi'
+import { useParams, useNavigate, Link } from 'react-router-dom'
+import { FiShoppingCart, FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 
 import { supabase } from '@/utils/supabase'
 import { ProductType } from '@/types'
@@ -9,7 +9,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Spinner } from '@/components'
 
 export default function ProductPage() {
-  const { productState, handleAddToCart } = useContext(GlobalContext)
+  const { productState, handleAddToCart, cartItems } = useContext(GlobalContext)
   const { allProducts } = productState
 
   const { productId } = useParams()
@@ -19,6 +19,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1)
   const [selectedImage, setSelectedImage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [isInCart, setIsInCart] = useState(false)
 
   // Traer el producto al cargar la página
   useEffect(() => {
@@ -56,6 +57,11 @@ export default function ProductPage() {
       getProduct()
     }
   }, [productId, allProducts])
+
+  useEffect(() => {
+    const isInCart = cartItems.some((item) => item.cartItem.id === productId)
+    setIsInCart(isInCart)
+  }, [cartItems, productId])
 
   const handleQuantityChange = (amount: number) => {
     const newQuantity = quantity + amount
@@ -164,8 +170,8 @@ export default function ProductPage() {
               <div className="flex items-center">
                 <button
                   onClick={() => handleQuantityChange(-1)}
-                  className="h-8 w-8 rounded-md bg-earth-sand text-earth-darkBrown transition-colors hover:bg-earth-terracotta hover:text-white"
-                  disabled={quantity <= 1}
+                  className="h-8 w-8 cursor-pointer rounded-md bg-earth-sand text-earth-darkBrown transition-colors hover:bg-earth-terracotta hover:text-white disabled:cursor-not-allowed disabled:bg-earth-sand disabled:text-earth-darkBrown"
+                  disabled={quantity <= 1 || isInCart}
                 >
                   <span className="sr-only">Disminuir cantidad</span>
                   <span aria-hidden="true">-</span>
@@ -175,8 +181,8 @@ export default function ProductPage() {
 
                 <button
                   onClick={() => handleQuantityChange(1)}
-                  className="h-8 w-8 rounded-md bg-earth-sand text-earth-darkBrown transition-colors hover:bg-earth-terracotta hover:text-white"
-                  disabled={product.stock <= quantity}
+                  className="h-8 w-8 cursor-pointer rounded-md bg-earth-sand text-earth-darkBrown transition-colors hover:bg-earth-terracotta hover:text-white disabled:cursor-not-allowed disabled:bg-earth-sand disabled:text-earth-darkBrown"
+                  disabled={product.stock <= quantity || isInCart}
                 >
                   <span className="sr-only">Aumentar cantidad</span>
                   <span aria-hidden="true">+</span>
@@ -194,18 +200,28 @@ export default function ProductPage() {
               </span>
             </div>
 
-            <button
-              onClick={() => handleAddToCart(product)}
-              disabled={product.stock === 0}
-              className={`flex items-center rounded-md px-6 py-3 font-medium text-white ${
-                product.stock === 0
-                  ? 'cursor-not-allowed bg-gray-400'
-                  : 'bg-earth-terracotta transition-colors hover:bg-earth-darkBrown'
-              }`}
-            >
-              <FiShoppingCart className="mr-2" size={24} />
-              {product.stock === 0 ? 'Agotado' : 'Añadir al carrito'}
-            </button>
+            {isInCart ? (
+              <Link
+                to="/cart"
+                className="flex items-center rounded-md bg-earth-terracotta px-6 py-3 font-medium text-white transition-colors hover:bg-earth-darkBrown"
+              >
+                <FiArrowRight className="mr-2" size={24} />
+                Ir al carrito
+              </Link>
+            ) : (
+              <button
+                onClick={() => handleAddToCart(product, quantity)}
+                disabled={product.stock === 0}
+                className={`flex items-center rounded-md px-6 py-3 font-medium text-white ${
+                  product.stock === 0
+                    ? 'cursor-not-allowed bg-earth-mediumBrown'
+                    : 'bg-earth-terracotta transition-colors hover:bg-earth-darkBrown'
+                }`}
+              >
+                <FiShoppingCart className={`mr-2 ${product.stock === 0 ? 'hidden' : ' '}`} size={24} />
+                {product.stock === 0 ? 'Agotado' : 'Añadir al carrito'}
+              </button>
+            )}
           </div>
 
           {/* Información adicional */}
