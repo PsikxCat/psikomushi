@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback, useMemo, SetStateAction } from 'react
 import { Session } from '@supabase/supabase-js'
 
 import { GlobalContext } from './GlobalContext'
-import { ProductType, CartItemType } from '@/types'
 import { supabase } from '@/utils/supabase'
+import { ProductType, CartItemType } from '@/types'
+import { useToast } from '@/hooks/use-toast'
 
 interface GlobalProviderProps {
   children: React.ReactNode
@@ -22,6 +23,8 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
   })
   const [cartItems, setCartItems] = useState<CartItemType[] | []>([])
 
+  const { toast } = useToast()
+
   // | MEMOIZACION DE FUNCIONES PARA EVITAR RE-RENDERIZADOS INNECESARIOS
   // función para manejar la sesión
   const handleSetSession = useCallback((newSession: SetStateAction<Session | null | undefined>) => {
@@ -33,7 +36,19 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
     setCartItems((prevItems) => {
       // Verificar si el producto ya está en el carrito
       const existingItem = prevItems.find(({ cartItem }) => cartItem.id === product.id)
-      if (existingItem) return prevItems
+      if (existingItem) {
+        toast({
+          title: 'Este producto ya está en el carrito',
+          variant: 'warning',
+        })
+
+        return prevItems
+      }
+
+      toast({
+        title: 'Producto agregado al carrito',
+        variant: 'default',
+      })
 
       return [...prevItems, { cartItem: product, quantity: 1 }]
     })
@@ -41,9 +56,19 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
 
   const handleRemoveFromCart = useCallback((productId: string) => {
     setCartItems((prevItems) => prevItems.filter(({ cartItem }) => cartItem.id !== productId))
+
+    toast({
+      title: 'Producto eliminado del carrito',
+      variant: 'destructive',
+    })
   }, [])
 
   const handleClearCart = useCallback(() => {
+    toast({
+      title: 'Carrito vacio',
+      variant: 'destructive',
+    })
+
     setCartItems([])
   }, [])
 
