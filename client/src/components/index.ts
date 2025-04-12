@@ -10,8 +10,8 @@ export { default as MessageSuccess } from './global/MessageSuccess'
 export { default as MessageError } from './global/MessageError'
 export { default as CartButton } from './global/CartButton'
 
-export { default as Header } from './admin/Header'
 export { default as Sidebar } from './admin/Sidebar'
+export { default as NullData } from './admin/NullData'
 
 export { default as LoginForm } from './auth/LoginForm'
 export { default as RegisterForm } from './auth/RegisterForm'

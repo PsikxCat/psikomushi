@@ -91,13 +91,21 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
         const { data, error } = await supabase.auth.getSession()
         if (error) {
           console.error('Error obteniendo sesión:', error)
-          setSession(null)
+          setSession((prev) => (prev === null ? prev : null))
         } else {
-          setSession(data.session)
+          // Comparación más detallada para prevenir actualizaciones idénticas
+          setSession((prev) => {
+            if (!prev && !data.session) return null
+            if (!prev && data.session) return data.session
+            if (prev && !data.session) return null
+            // Si ambos existen, comparar IDs
+            if (prev?.user.id === data.session?.user.id) return prev
+            return data.session
+          })
         }
       } catch (err) {
         console.error('Error inesperado:', err)
-        setSession(null)
+        setSession((prev) => (prev === null ? prev : null))
       } finally {
         setAuthLoading(false)
       }
@@ -107,8 +115,20 @@ export default function GlobalProvider({ children }: GlobalProviderProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_, session) => {
-      setSession(session)
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change:', event)
+
+      // Solo actualizar si hay un cambio real en la sesión
+      setSession((prev) => {
+        if (!prev && !session) return null
+        if (!prev && session) return session
+        if (prev && !session) return null
+        // Si ambos existen, comparar IDs
+        if (prev?.user.id === session?.user.id && prev?.expires_at === session?.expires_at) {
+          return prev // No actualizar si es la misma sesión
+        }
+        return session
+      })
     })
 
     return () => subscription.unsubscribe()
