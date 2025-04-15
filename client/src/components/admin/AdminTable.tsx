@@ -4,28 +4,62 @@ import {
   type SortingState,
   type ColumnFiltersState,
   type VisibilityState,
-  // flexRender,
+  flexRender,
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
+  FilterFn,
+  FilterFnOption,
 } from '@tanstack/react-table'
 
+import Spinner from '@/components/global/Spinner'
 import { Input } from '@/components/ui/input'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+} from '@/components/ui/dropdown-menu'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface AdminTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  isLoading?: boolean
 }
 
-export default function AdminTable<TData, TValue>({ columns, data }: AdminTableProps<TData, TValue>) {
+export default function AdminTable<TData, TValue>({
+  columns,
+  data,
+  isLoading,
+}: AdminTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    Imagen: false,
+  })
   const [rowSelection, setRowSelection] = useState({})
+  const [globalFilter, setGlobalFilter] = useState('')
+
+  // Función de filtrado global personalizada
+  const multiColumnFilter: FilterFn<TData> = (row, _, value) => {
+    // Si no hay valor de búsqueda, mostrar todas las filas
+    if (!value) return true
+
+    const searchValue = value.toLowerCase()
+    const refMatch = String(row.getValue('ref') || '')
+      .toLowerCase()
+      .includes(searchValue)
+    const nameMatch = String(row.getValue('name') || '')
+      .toLowerCase()
+      .includes(searchValue)
+
+    return refMatch || nameMatch
+  }
 
   const table = useReactTable({
     columns,
@@ -41,46 +75,164 @@ export default function AdminTable<TData, TValue>({ columns, data }: AdminTableP
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
 
+    filterFns: {
+      multiColumn: multiColumnFilter,
+    },
+
+    globalFilterFn: 'multiColumn' as FilterFnOption<TData>,
+    onGlobalFilterChange: setGlobalFilter,
+
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
+      globalFilter,
     },
   })
 
   return (
-    <div className="relative border border-red-700 p-2">
+    <div className="relative p-2">
       {/* Busqueda por nombre y referncia & Visibilidad de columnas */}
+      {/* //> Probablemente el input deba llegar como un componente dadas las diferencias de filtrado entre tablas */}
       <section className="flex items-center py-4">
         {/* Busqueda */}
         <Input
-          placeholder="Buscar nombre o ref"
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(e) => table.getColumn('name')?.setFilterValue(e.target.value)}
-          className="max-w-sm"
+          placeholder="Filtrar por nombre o referencia..."
+          value={globalFilter ?? ''}
+          // onChange={(e) => table.getColumn('name')?.setFilterValue(e.target.value)}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="max-w-sm bg-earth-mauve placeholder:text-earth-lightBrown"
         />
 
         {/* Visibilidad */}
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger asChild className="hover:bg-earth-terracotta">
             <Button variant="outline" className="ml-auto text-earth-darkBrown">
               Ver columnas
             </Button>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end">
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <label htmlFor="col1">Columna 1</label>
-              </div>
-              <div className="flex items-center gap-2">
-                <label htmlFor="col2">Columna 2</label>
-              </div>
-              {/* Add more columns as needed */}
-            </div>
+          <DropdownMenuContent align="end" className="bg-earth-lightBrown font-medium text-earth-darkBrown">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize hover:bg-earth-terracotta"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
           </DropdownMenuContent>
         </DropdownMenu>
+      </section>
+
+      {/* Tabla */}
+      <section className="mt-4">
+        {isLoading ? (
+          <div className="flex h-[50vh] w-full items-center justify-center">
+            <Spinner visible={isLoading} />
+          </div>
+        ) : (
+          <div className="rounded-md border">
+            <Table className="text-earth-darkBrown">
+              {/* Headers */}
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id} className="h-10 bg-earth-terracotta">
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <TableHead key={header.id} className="h-10 text-center text-earth-sand">
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(header.column.columnDef.header, header.getContext())}
+                        </TableHead>
+                      )
+                    })}
+                  </TableRow>
+                ))}
+              </TableHeader>
+
+              {/* Body */}
+              <TableBody>
+                {table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row, index) => (
+                    <TableRow
+                      className={`h-10 text-center font-bold hover:bg-earth-darkBrown hover:text-earth-cream ${
+                        index % 2 === 1 ? 'bg-earth-mauve' : 'bg-earth-lightBrown'
+                      }`}
+                      key={row.id}
+                      data-state={row.getIsSelected() && 'selected'}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={columns.length} className="h-24 text-center">
+                      No se encontraron resultados
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </section>
+
+      {/* Paginacion */}
+      <section className="flex items-center justify-end space-x-3 px-2 py-4">
+        <Select
+          value={`${table.getState().pagination.pageSize}`}
+          onValueChange={(value) => {
+            table.setPageSize(Number(value))
+            // table.setPageIndex(0)
+          }}
+        >
+          <SelectTrigger className="h-8 w-[60px] hover:bg-earth-terracotta hover:text-earth-cream">
+            <SelectValue placeholder={table.getState().pagination.pageSize} />
+          </SelectTrigger>
+
+          <SelectContent side="top" className="w-[60px] bg-earth-lightBrown text-earth-darkBrown">
+            {[5, 10].map((pageSize) => (
+              <SelectItem className="focus:bg-earth-terracotta" key={pageSize} value={`${pageSize}`}>
+                {pageSize}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <div className="flex space-x-1">
+          <Button
+            className="hover:bg-earth-terracotta hover:text-earth-cream"
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Anterior
+          </Button>
+
+          <Button
+            className="hover:bg-earth-terracotta hover:text-earth-cream"
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Siguiente
+          </Button>
+        </div>
       </section>
     </div>
   )

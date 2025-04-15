@@ -27,6 +27,7 @@ const config = {
           darkGreen: 'var(--darkGreen)',
           oliveGreen: 'var(--oliveGreen)',
           sand: 'var(--sand)',
+          mauve: 'var(--mauve)',
           cream: 'var(--cream)',
           // Colores tierra de acento
           terracotta: 'var(--terracotta)',
