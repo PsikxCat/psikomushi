@@ -4,8 +4,8 @@ import { useForm } from 'react-hook-form'
 import { type z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { supabase } from '@/utils/supabase'
 import { LoginSchema } from '@/schemas'
+import { useAuth } from '@/hooks/use-auth'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -15,6 +15,8 @@ export default function LoginForm() {
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const { login } = useAuth()
   const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -26,19 +28,21 @@ export default function LoginForm() {
   })
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-    try {
-      const { email, password } = values
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+    const { email, password } = values
 
-      if (error) throw error // Lanzar error para que sea capturado por el catch
+    try {
+      setIsLoggingIn(true)
+      setError(null)
+      setSuccess(null)
+
+      // Iniciar sesión
+      const { error } = await login(email, password)
+      // Si hay error, lanzar error para que sea capturado por el catch
+      if (error) throw error
 
       setSuccess('Login exitoso!')
       navigate('/')
     } catch (error) {
-      // Manejo de error con tipado estricto
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido al iniciar sesión'
       setError(errorMessage)
       console.error('Error al iniciar sesión:', errorMessage)

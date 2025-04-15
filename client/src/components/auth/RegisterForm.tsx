@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/utils/supabase'
 import { useForm } from 'react-hook-form'
 import { type z } from 'zod'
 
 import { zodResolver } from '@hookform/resolvers/zod'
-import { supabase } from '@/utils/supabase'
+import { useAuth } from '@/hooks/use-auth'
 import { RegisterSchema } from '@/schemas'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -15,6 +16,8 @@ export default function RegisterForm() {
   const [isRegistering, setIsRegistering] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const { register } = useAuth()
   const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -42,25 +45,23 @@ export default function RegisterForm() {
       setSuccess(null)
 
       // registrar usuario
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            role: 'client',
-          },
-        },
+      const { user, error: authError } = await register(email, password, {
+        name,
+        role: 'customer',
       })
       // si hay error lanzar error para que sea capturado por el catch
       if (authError) throw authError
 
-      const userId = authData.session?.user.id
+      if (!user) {
+        setError('Error al registrar usuario')
+        return
+      }
 
       // guardar usuario en base de datos
       const { error } = await supabase.from('users').insert([
         {
-          id: userId, // > Usar el mismo ID que auth.users
+          id: user.id, // > Usar el mismo ID que auth.users
+          role: 'customer',
           name,
           email,
         },

@@ -1,8 +1,15 @@
+enum Role {
+  ADMIN = 'admin',
+  SELLER = 'seller',
+  DELIVERY = 'delivery',
+  CUSTOMER = 'customer',
+}
+
 export interface UserType {
   id: number
   name: string
   email: string
-  role: 'admin' | 'seller' | 'delivery' | 'customer'
+  role: Role
 }
 
 export interface EmployeeType {
@@ -18,6 +25,7 @@ export interface EmployeeType {
 export interface ProductType {
   id: string
   image_urls: string[]
+  ref: string
   name: string
   short_description: string
   long_description: string

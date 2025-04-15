@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction } from 'react'
+import { createContext } from 'react'
 import { Session } from '@supabase/supabase-js'
 
 import { ProductType, CartItemType } from '@/types'
@@ -6,7 +6,8 @@ import { ProductType, CartItemType } from '@/types'
 export interface GlobalContextType {
   session: Session | null | undefined
   // setSession: (session: Session | null) => void
-  setSession: Dispatch<SetStateAction<Session | null | undefined>>
+  // setSession: Dispatch<SetStateAction<Session | null | undefined>>
+  setSession: (newSession: Session | null | undefined) => void
   authLoading: boolean
   productState: {
     allProducts: ProductType[]
@@ -14,14 +15,6 @@ export interface GlobalContextType {
     isLoading: boolean
     bannerProduct: ProductType | null
   }
-  setProductState: Dispatch<
-    SetStateAction<{
-      allProducts: ProductType[]
-      featuredProducts: ProductType[]
-      isLoading: boolean
-      bannerProduct: ProductType | null
-    }>
-  >
   cartItems: CartItemType[]
   handleAddToCart: (product: ProductType, quantity?: number) => void
   handleRemoveFromCart: (productId: string) => void

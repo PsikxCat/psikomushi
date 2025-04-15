@@ -2,15 +2,15 @@ import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { FiShoppingCart, FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 
-import { supabase } from '@/utils/supabase'
 import { ProductType } from '@/types'
 import { GlobalContext } from '@/context/GlobalContext'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Spinner } from '@/components'
+import { useProducts } from '@/hooks/use-products'
 
 export default function ProductPage() {
-  const { productState, handleAddToCart, cartItems } = useContext(GlobalContext)
-  const { allProducts } = productState
+  const { handleAddToCart, cartItems } = useContext(GlobalContext)
+  const { getProductById } = useProducts()
 
   const { productId } = useParams()
   const navigate = useNavigate()
@@ -23,26 +23,20 @@ export default function ProductPage() {
 
   // Traer el producto al cargar la página
   useEffect(() => {
-    const getProduct = async () => {
+    const loadProduct = async () => {
       setIsLoading(true)
 
-      // buscar el producto en el contexto
-      const productFromContext = allProducts.find((p) => p.id === productId)
-
-      if (productFromContext) {
-        setProduct(productFromContext)
-        setSelectedImage(productFromContext.image_urls[0])
+      if (!productId) {
         setIsLoading(false)
         return
       }
 
-      // Si no está en el contexto, buscarlo en la base de datos
       try {
-        const { data } = await supabase.from('products').select('*').eq('id', productId).single()
+        const productData = await getProductById(productId)
 
-        if (data) {
-          setProduct(data)
-          setSelectedImage(data.image_urls[0])
+        if (productData) {
+          setProduct(productData)
+          setSelectedImage(productData.image_urls[0])
         } else {
           console.error('Producto no encontrado')
         }
@@ -53,10 +47,8 @@ export default function ProductPage() {
       }
     }
 
-    if (productId) {
-      getProduct()
-    }
-  }, [productId, allProducts])
+    loadProduct()
+  }, [productId, getProductById])
 
   useEffect(() => {
     const isInCart = cartItems.some((item) => item.cartItem.id === productId)

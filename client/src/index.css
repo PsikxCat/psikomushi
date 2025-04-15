@@ -70,6 +70,12 @@
   }
 }
 
+@layer base {
+  h2 {
+    @apply text-[clamp(0.5rem,1rem_+_2vw,2rem)] tracking-tight leading-6 md:leading-8 mb-4 font-bold;
+  }
+}
+
 @layer utilities {
   .flex_center {
     @apply flex justify-center items-center;
@@ -81,6 +87,10 @@
 
   .container {
     @apply w-full max-w-3xl flex justify-center items-center;
+  }
+
+  .section {
+    @apply w-full py-12 px-4 flex justify-center items-center;
   }
 
   .p {

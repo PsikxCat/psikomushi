@@ -34,7 +34,7 @@ export default function Sidebar() {
   ]
 
   return (
-    <nav className="h-[calc(100vh-max(70px,calc(50px+3vw))-3rem)] w-44 bg-earth-darkBrown py-6 text-white">
+    <nav className="h-full w-44 bg-earth-darkBrown py-6 text-white">
       <ul className="flex flex-col space-y-4">
         {menuItems.map((item) => {
           // Verificar si la ruta actual coincide con este elemento del menú
