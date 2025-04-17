@@ -14,8 +14,8 @@ import {
   FilterFnOption,
 } from '@tanstack/react-table'
 
-import Spinner from '@/components/global/Spinner'
-import { Input } from '@/components/ui/input'
+import { Spinner, FilterTable } from '@/components'
+// import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -26,13 +26,24 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
+interface FilterConfig<TData> {
+  multiColumnFilter: FilterFn<TData>
+  placeholderColumns: string[]
+}
+
 interface AdminTableProps<TData> {
   columns: ColumnDef<TData, TData[keyof TData]>[]
   data: TData[]
   isLoading?: boolean
+  filterConfig: FilterConfig<TData>
 }
 
-export default function AdminTable<TData>({ columns, data, isLoading }: AdminTableProps<TData>) {
+export default function AdminTable<TData>({
+  columns,
+  data,
+  isLoading,
+  filterConfig,
+}: AdminTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -40,22 +51,6 @@ export default function AdminTable<TData>({ columns, data, isLoading }: AdminTab
   })
   const [rowSelection, setRowSelection] = useState({})
   const [globalFilter, setGlobalFilter] = useState('')
-
-  // Función de filtrado global personalizada
-  const multiColumnFilter: FilterFn<TData> = (row, _, value) => {
-    // Si no hay valor de búsqueda, mostrar todas las filas
-    if (!value) return true
-
-    const searchValue = value.toLowerCase()
-    const refMatch = String(row.getValue('ref') || '')
-      .toLowerCase()
-      .includes(searchValue)
-    const nameMatch = String(row.getValue('nombre') || '')
-      .toLowerCase()
-      .includes(searchValue)
-
-    return refMatch || nameMatch
-  }
 
   const table = useReactTable({
     columns,
@@ -72,7 +67,7 @@ export default function AdminTable<TData>({ columns, data, isLoading }: AdminTab
     onRowSelectionChange: setRowSelection,
 
     filterFns: {
-      multiColumn: multiColumnFilter,
+      multiColumn: filterConfig.multiColumnFilter,
     },
 
     globalFilterFn: 'multiColumn' as FilterFnOption<TData>,
@@ -90,13 +85,12 @@ export default function AdminTable<TData>({ columns, data, isLoading }: AdminTab
   return (
     <div className="relative p-2">
       {/* Busqueda por nombre y referncia & Visibilidad de columnas */}
-      <section className="flex items-center py-4">
+      <section className="flex items-center space-x-2 py-4">
         {/* Busqueda */}
-        <Input
-          placeholder="Filtrar por nombre o referencia..."
-          value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm bg-earth-mauve placeholder:text-earth-lightBrown"
+        <FilterTable
+          value={globalFilter}
+          onChange={setGlobalFilter}
+          placeholderColumns={filterConfig.placeholderColumns}
         />
 
         {/* Visibilidad */}

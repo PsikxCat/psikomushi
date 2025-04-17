@@ -13,6 +13,7 @@ export { default as CartButton } from './global/CartButton'
 export { default as Sidebar } from './admin/Sidebar'
 export { default as NullData } from './admin/NullData'
 export { default as AdminTable } from './admin/AdminTable'
+export { default as FilterTable } from './admin/FilterTable'
 
 export { default as LoginForm } from './auth/LoginForm'
 export { default as RegisterForm } from './auth/RegisterForm'
