@@ -18,7 +18,7 @@ export async function fetchProducts() {
 
     return { data: parsedProducts, error: null }
   } catch (error) {
-    console.error('Error fetching products:', error)
+    console.error('Error obteniendo productos:', error)
     return { data: null, error: error as Error }
   }
 }
@@ -37,7 +37,7 @@ export async function fetchProductById(productId: string) {
 
     return { data: parsedProduct, error: null }
   } catch (error) {
-    console.error('Error fetching product by ID:', error)
+    console.error('Error obteniendo producto por ID:', error)
     return { data: null, error: error as Error }
   }
 }
@@ -56,7 +56,7 @@ export async function addProduct(product: Omit<ProductType, 'id'>) {
 
     return { data: parsedProduct, error: null }
   } catch (error) {
-    console.error('Error adding product:', error)
+    console.error('Error agregando producto:', error)
     return { data: null, error: error as Error }
   }
 }
@@ -75,7 +75,7 @@ export async function updateProduct(id: string, updates: Partial<ProductType>) {
 
     return { data: parsedProduct, error: null }
   } catch (error) {
-    console.error('Error updating product:', error)
+    console.error('Error actualizando producto:', error)
     return { data: null, error: error as Error }
   }
 }
@@ -88,6 +88,7 @@ export async function deleteProduct(id: string) {
 
     return { success: true, error: null }
   } catch (error) {
+    console.error('Error eliminando producto:', error)
     return { success: false, error: error as Error }
   }
 }

@@ -6,20 +6,26 @@ enum Role {
 }
 
 export interface UserType {
-  id: number
-  name: string
-  email: string
+  id: string
   role: Role
+  name: string
+  last_name: string
+  email: string
+  phone_number: string
+  address: string
 }
 
-export interface EmployeeType {
-  id_employee: number
-  name: string
-  surname: string
-  role: string
-  phone_number: string
-  email: string
-  hire_date: string
+export interface CustomerType extends UserType {
+  registered_date?: Date | null
+  // last_purchase_date?: Date | null
+  // total_purchases?: number
+  // demas campos...
+}
+
+export interface EmployeeType extends UserType {
+  hired_date?: Date | null
+  // salary: number
+  // demas campos...
 }
 
 export interface ProductType {

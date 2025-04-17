@@ -7,6 +7,7 @@ export { default as AdminDashboardPage } from './admin/DashboardPage'
 export { default as AdminProductsPage } from './admin/ProductsPage'
 export { default as AdminOrdersPage } from './admin/OrdersPage'
 export { default as AdminCustomersPage } from './admin/CustomersPage'
+export { default as AdminEmployeesPage } from './admin/EmployeesPage'
 export { default as AdminSalesPage } from './admin/SalesPage'
 
 export { default as LoginPage } from './auth/LoginPage'

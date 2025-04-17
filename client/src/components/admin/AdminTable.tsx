@@ -26,17 +26,13 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-interface AdminTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
+interface AdminTableProps<TData> {
+  columns: ColumnDef<TData, TData[keyof TData]>[]
   data: TData[]
   isLoading?: boolean
 }
 
-export default function AdminTable<TData, TValue>({
-  columns,
-  data,
-  isLoading,
-}: AdminTableProps<TData, TValue>) {
+export default function AdminTable<TData>({ columns, data, isLoading }: AdminTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -54,7 +50,7 @@ export default function AdminTable<TData, TValue>({
     const refMatch = String(row.getValue('ref') || '')
       .toLowerCase()
       .includes(searchValue)
-    const nameMatch = String(row.getValue('name') || '')
+    const nameMatch = String(row.getValue('nombre') || '')
       .toLowerCase()
       .includes(searchValue)
 
@@ -94,13 +90,11 @@ export default function AdminTable<TData, TValue>({
   return (
     <div className="relative p-2">
       {/* Busqueda por nombre y referncia & Visibilidad de columnas */}
-      {/* //> Probablemente el input deba llegar como un componente dadas las diferencias de filtrado entre tablas */}
       <section className="flex items-center py-4">
         {/* Busqueda */}
         <Input
           placeholder="Filtrar por nombre o referencia..."
           value={globalFilter ?? ''}
-          // onChange={(e) => table.getColumn('name')?.setFilterValue(e.target.value)}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="max-w-sm bg-earth-mauve placeholder:text-earth-lightBrown"
         />

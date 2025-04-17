@@ -6,6 +6,7 @@ import {
   AdminProductsPage,
   AdminOrdersPage,
   AdminCustomersPage,
+  AdminEmployeesPage,
   AdminSalesPage,
   LoginPage,
   RegisterPage,
@@ -66,6 +67,7 @@ const App: React.FC = () => {
               <Route path="dashboard" element={<AdminDashboardPage />} /> {/* Dashboard */}
               <Route path="products" element={<AdminProductsPage />} /> {/* Gestión de productos */}
               <Route path="customers" element={<AdminCustomersPage />} /> {/* Gestión de clientes */}
+              <Route path="employees" element={<AdminEmployeesPage />} /> {/* Gestión de empleados */}
             </Route>
           </Route>
         </Route>

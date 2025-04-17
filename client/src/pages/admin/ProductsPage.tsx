@@ -29,10 +29,10 @@ export default function ProductsPage() {
 
   return (
     <section className="flex h-full w-full flex-col text-earth-darkBrown">
-      <h2 className="my-0 text-center text-earth-terracotta">Gestionar Productos</h2>
-      <p className="w-full p-2 text-center font-bold">Se muestran todos los productos</p>
+      <h2 className="my-0 mb-8 text-center text-earth-terracotta">Gestionar Productos</h2>
+      {/* <p className="w-full p-2 text-center font-bold">Se muestran todos los productos</p> */}
 
-      <AdminTable columns={columns} data={products} isLoading={isLoading} />
+      <AdminTable<ProductType> columns={columns} data={products} isLoading={isLoading} />
     </section>
   )
 }

@@ -1,13 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
 
 import { GlobalContext } from '@/context/GlobalContext'
-import { fetchCustomers } from '@/services/api/users'
+import { fetchEmployees } from '@/services/api/users'
 import { AdminTable, NullData } from '@/components'
-import { columns } from '@/components/admin/customers/columns'
-import { CustomerType } from '@/types'
+import { columns } from '@/components/admin/employees/columns'
+import { EmployeeType } from '@/types'
 
 export default function EmployeesPage() {
-  const [employees, setEmployees] = useState<CustomerType[]>([])
+  const [employees, setEmployees] = useState<EmployeeType[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const { session } = useContext(GlobalContext)
 
@@ -15,7 +15,7 @@ export default function EmployeesPage() {
 
   useEffect(() => {
     ;(async () => {
-      const { data } = await fetchCustomers()
+      const { data } = await fetchEmployees()
       if (data) {
         setEmployees(data)
       }
@@ -29,9 +29,9 @@ export default function EmployeesPage() {
 
   return (
     <section className="flex h-full w-full flex-col text-earth-darkBrown">
-      <h2 className="my-0 mb-8 text-center text-earth-terracotta">Gestionar Clientes</h2>
+      <h2 className="my-0 mb-8 text-center text-earth-terracotta">Gestionar Empleados</h2>
 
-      <AdminTable<CustomerType> columns={columns} data={employees} isLoading={isLoading} />
+      <AdminTable<EmployeeType> columns={columns} data={employees} isLoading={isLoading} />
     </section>
   )
 }
